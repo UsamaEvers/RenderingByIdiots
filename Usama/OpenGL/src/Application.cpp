@@ -8,6 +8,7 @@ struct Vertex
 {
 	glm::vec3 pos;
 	glm::vec3 color;
+
 };
 
 int main(void)
@@ -19,7 +20,7 @@ int main(void)
 		return -1;
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(1920, 1080, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(800, 600, "Usama OpenGL Project", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -28,7 +29,7 @@ int main(void)
 
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
-	
+
 	if (glewInit() != GLEW_OK)
 		std::cout << "Glew init was not equal to GLEW_OK" << std::endl;
 
@@ -36,30 +37,45 @@ int main(void)
 	// load mesh
 
 	Vertex vertices[] = {
-		{{-0.5f,  0.0f, 0.0f}, {1., 0., 0.}},
-		{{ 0.5f,  0.0f, 0.0f}, {0., 1., 0.}},
-		{{ 0.0f,  0.5f, 0.0f}, {0., 0., 1.}},
-		{{-0.5f,  0.0f, 0.0f}, {1., 0., 0.}},
-		{{ 0.5f,  0.0f, 0.0f}, {0., 1., 0.}},
+		{{-0.5f,  0.0f, 0.0f},  {1., 0., 0.}},
+		{{ 0.5f,  0.0f, 0.0f},  {0., 1., 0.}},
+		{{ 0.0f,  0.5f, 0.0f},  {0., 0., 1.}},
+		{{-0.5f,  0.0f, 0.0f},  {1., 0., 0.}},
+		{{ 0.5f,  0.0f, 0.0f},  {0., 1., 0.}},
 		{{ 0.0f,  -0.5f, 0.0f}, {0., 0., 1.}},
 	};
-
+	Vertex Plane[] = {
+		{{ 0.5f,  0.5f, 0.0f}, {1., 0., 0.}},
+		{{ 0.5f, -0.5f, 0.0f}, {0., 1., 0.}},
+		{{-0.5f, -0.5f, 0.0f}, {0., 0., 1.}},
+		{{-0.5f,  0.5f, 0.0f}, {1., 1., 1.}},
+	};
+	unsigned int indices[] = {  // note that we start from 0!
+		0, 1, 3,   // first triangle
+		1, 2, 3    // second triangle
+	};
 	unsigned int VBO;
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
 	glGenBuffers(1, &VBO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Plane), Plane, GL_STATIC_DRAW);
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	
 
 	// load shader
 	const char* vertexShaderSource = "#version 330 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
 		"layout (location = 1) in vec3 aUV;\n"
 		"out vec3 uv;\n"
+		"uniform float addToPosition;\n"
 		"void main()\n"
 		"{\n"
 		"	uv = aUV;\n"
-		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+		"   gl_Position = vec4(aPos.x + addToPosition, aPos.y, aPos.z, 1.0);\n"
 		"}\0";
 
 	unsigned int vertexShader;
@@ -101,9 +117,13 @@ int main(void)
 		}
 	}
 
+
 	unsigned int shaderProgram;
 	shaderProgram = glCreateProgram();
-	
+	float addtoposition = 0.0f;
+
+	//glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
@@ -121,17 +141,21 @@ int main(void)
 
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), 0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (float*)(3 * sizeof(float)));
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (float*)(3 * sizeof(float)));
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glUseProgram(shaderProgram);
 
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices)/sizeof(Vertex));
+		glUniform1f(vertexColorLocation, addtoposition);
 
+		glUseProgram(shaderProgram);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-
+	
+		addtoposition += 0.0001f;
+		
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
 
