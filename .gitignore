@@ -23,3 +23,11 @@ Brian/OpenGL/x64/Debug/Application.obj
 Brian/.vs/Brian/v16/.suo
 Brian/.vs/Brian/v15/Browse.VC.db
 Brian/.vs/Brian/v15/.suo
+*.txt
+Brian/OpenGL/OpenGL.vcxproj.user
+Brian/OpenGL/x64/Debug/OpenGL.Build.CppClean.log
+Brian/OpenGL/OpenGL.vcxproj.user
+*.user
+Brian/OpenGL/OpenGL.vcxproj.user
+Brian/OpenGL/OpenGL.vcxproj.user
+Brian/OpenGL/OpenGL.vcxproj.user
