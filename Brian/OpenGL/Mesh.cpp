@@ -6,17 +6,50 @@
 
 Mesh::Mesh(ModelData modelData)
 {
+
 	m_NumVertices = static_cast<GLuint>(modelData.vertices.size());
-
-	glGenBuffers(1, &m_VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glBufferData(GL_ARRAY_BUFFER, m_NumVertices * sizeof(Vertex), &modelData.vertices[0], GL_STATIC_DRAW);
-
 	m_NumIndices = static_cast<GLuint>(modelData.indices.size());
 
-	glGenBuffers(1, &m_EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_NumIndices * sizeof(int), &modelData.indices[0], GL_STATIC_DRAW);
+	glGenVertexArrays(1, &m_VAO);
+	glBindVertexArray(m_VAO);
+
+	{
+		GLuint vboID;
+
+		glGenBuffers(1, &vboID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_NumIndices * sizeof(int), &modelData.indices[0], GL_STATIC_DRAW);
+		m_VBOS.push_back(vboID);
+	}
+
+	{
+		GLuint vboID;
+		glGenBuffers(1, &vboID);
+		glBindBuffer(GL_ARRAY_BUFFER, vboID);
+		glBufferData(GL_ARRAY_BUFFER, m_NumVertices * sizeof(glm::vec3), &modelData.vertices[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		m_VBOS.push_back(vboID);
+	}
+	{
+		GLuint vboID;
+		glGenBuffers(1, &vboID);
+		glBindBuffer(GL_ARRAY_BUFFER, vboID);
+		glBufferData(GL_ARRAY_BUFFER, modelData.uvs.size() * sizeof(glm::vec2), &modelData.uvs[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		m_VBOS.push_back(vboID);
+	}
+	{
+		GLuint vboID;
+		glGenBuffers(1, &vboID);
+		glBindBuffer(GL_ARRAY_BUFFER, vboID);
+		glBufferData(GL_ARRAY_BUFFER, modelData.normals.size() * sizeof(glm::vec3), &modelData.normals[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		m_VBOS.push_back(vboID);
+	}
+	glBindVertexArray(0);
 
 	m_Shader = Shader::CreateShader("shader");
 	m_Shader->AddUniformLocation("model");
@@ -26,7 +59,10 @@ Mesh::Mesh(ModelData modelData)
 
 Mesh::~Mesh()
 {
-	glDeleteBuffers(1, &m_VBO);
+	for (auto vbo : m_VBOS)
+	{
+		glDeleteBuffers(1, &vbo);
+	}
 	glDeleteBuffers(1, &m_EBO);
 }
 
@@ -43,16 +79,13 @@ void Mesh::Render(Camera cam)
 	m_Shader->SetUniform("view", view);
 	m_Shader->SetUniform("projection", projection);
 
+	glBindVertexArray(m_VAO);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (float*)(3 * sizeof(float)));
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+	glEnableVertexAttribArray(2);
 	glDrawElements(GL_TRIANGLES, m_NumIndices, GL_UNSIGNED_INT, 0);
-
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+	glBindVertexArray(0);
 }

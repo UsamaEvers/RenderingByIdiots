@@ -29,7 +29,7 @@ int main(void)
 
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
-	
+
 	if (glewInit() != GLEW_OK)
 		std::cout << "Glew init was not equal to GLEW_OK" << std::endl;
 
@@ -39,12 +39,15 @@ int main(void)
 
 	//camera.GetTransform().GetPosition().z = -5.0f;
 	mesh.GetTransform().GetPosition().z = -5.0f;
+	mesh.GetTransform().GetScale() *= 5.0f;
 
-	glClearColor(0.3f, 0.2f, 0.8f, 1.f);
 	
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CW);
+	//glFrontFace(GL_CW);
+
+	glClearColor(0.3f, 0.2f, 0.8f, 1.f);
 
 	int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
 

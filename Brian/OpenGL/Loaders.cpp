@@ -15,6 +15,26 @@ unsigned long getFileLength(std::ifstream& file)
 	return len;
 }
 
+size_t split(const std::string& txt, std::vector<std::string>& strs, char ch)
+{
+	size_t pos = txt.find(ch);
+	size_t initialPos = 0;
+	strs.clear();
+
+	// Decompose statement
+	while (pos != std::string::npos) {
+		strs.push_back(txt.substr(initialPos, pos - initialPos));
+		initialPos = pos + 1;
+
+		pos = txt.find(ch, initialPos);
+	}
+
+	// Add the last one
+	strs.push_back(txt.substr(initialPos, std::min(pos, txt.size()) - initialPos + 1));
+
+	return strs.size();
+}
+
 char* Loaders::Loadshader(std::string filename)
 {
 	unsigned long len;
@@ -46,99 +66,6 @@ char* Loaders::Loadshader(std::string filename)
 	return ShaderSource;
 }
 
-glm::vec3 GetPosition(std::string str)
-{
-	int i = 0;
-	while (str[i] != ' ')
-	{
-		i++;
-	}
-
-	glm::vec3 pos;
-
-	for (int f = 0; f < 3; f++)
-	{
-		i++;
-		std::string value;
-		while (str[i] != ' ')
-		{
-			value.push_back(str[i]);
-			i++;
-			if (i == str.length())
-			{
-				break;
-			}
-		}
-		pos[f] = std::stof(value);
-	}
-	return pos;
-}
-
-glm::vec2 GetUv(std::string str)
-{
-	int i = 0;
-	while (str[i] != ' ')
-	{ 
-		i++;
-	}
-
-	glm::vec2 uv;
-	
-	for (int f = 0; f < 2; f++)
-	{
-		i++;
-		std::string value;
-		while (str[i] != ' ')
-		{
-			value.push_back(str[i]);
-			i++;
-			if (i == str.length())
-			{
-				break;
-			}
-		}
-		uv[f] = std::stof(value);
-	}
-	return uv;
-}
-
-void AddIndices(std::vector<int>& indices, std::string str)
-{
-	int f = 0;
-	while (str[f] != ' ')
-	{
-		f++;
-	}
-	f++;
-	for (int i = 0; i < 3; i++)
-	{
-		std::string val;
-		while (str[f] != '/')
-		{
-			val.push_back(str[f]);
-			f++;
-			if (f == str.length())
-			{
-				break;
-			}
-		}
-		indices.push_back(std::stoi(val)-1);
-		if (f == str.length())
-		{
-			break;
-		}
-		while (str[f] != ' ')
-		{
-			f++;
-			if (f == str.length())
-			{
-				break;
-			}
-		}
-		f++;
-	}
-}
-
 ModelData Loaders::LoadModel(std::string filename)
 {
 	ModelData modelData;
@@ -147,40 +74,123 @@ ModelData Loaders::LoadModel(std::string filename)
 	std::ifstream file;
 	file.open(filename, std::ios::in); // opens as ASCII!
 
-	std::vector<Vertex> vertices;
-	std::vector<int> indices;
+	std::vector<glm::vec3> vertices;
 
-	int textureIndex = 0;
+	std::vector<glm::vec2> uvscpy;
+	std::vector<glm::vec3> normalscpy;
+	
+	std::vector<glm::vec2> uvs;
+	std::vector<glm::vec3> normals;
+
+	std::vector<int> indices;
 
 	std::string str;
 	while (std::getline(file, str)) {
-		switch (str[0])
+
+		std::vector<std::string> v;
+
+		split(str, v, ' ');
+
+		if (v[0] == "v")
 		{
-		case 'v':
-			switch (str[1])
+			glm::vec3 vertex(std::stof(v[1]), std::stof(v[2]), std::stof(v[3]));
+			vertices.push_back(vertex);
+		}
+		else if (v[0] == "vt")
+		{
+			glm::vec2 uv(std::stof(v[1]), std::stof(v[2]));
+			uvscpy.push_back(uv);
+		}
+		else if (v[0] == "vn")
+		{
+			glm::vec3 normal(std::stof(v[1]), std::stof(v[2]), std::stof(v[3]));
+			normalscpy.push_back(normal);
+		}
+		if (v[0] == "f")
+		{
+			bool addNormal = false;
+			for (int i = 1; i < 4; i++)
 			{
-			case ' ':
-				vertices.push_back({ GetPosition(str), {0., 0.} });
-				break;
-			case 't':
-				if (textureIndex < vertices.size())
-					vertices[textureIndex].uv = GetUv(str);
-				textureIndex++;
-				break;
-			case 'n':
-				break;
+				std::vector<std::string> val;
+
+				split(v[i], val, '/');
+				indices.push_back(std::stoi(val[0]) - 1);
 			}
-			break;
-		case 'f':
-			AddIndices(indices, str);
-			break;
 		}
 	}
-	
+	uvs.resize(indices.size());
+	normals.resize(indices.size());
+	file.close();
+
+	file.open(filename, std::ios::in); // opens as ASCII!
+
+	while (std::getline(file, str)) 
+	{
+
+		std::vector<std::string> v;
+
+		split(str, v, ' ');
+
+		if (v[0] == "f")
+		{
+			bool addNormal = false;
+			for (int i = 1; i < 4; i++)
+			{
+				std::vector<std::string> val;
+
+				split(v[i], val, '/');
+				int index = std::stoi(val[0]) - 1;
+				if (val.size() > 1)
+				{
+					if (val[1] != "")
+					{
+						uvs[index] = uvscpy[std::stoi(val[1]) - 1];
+					}
+					else
+					{
+						uvs[index] = { 0., 0. };
+					}
+					if (val[2] != "")
+					{
+						normals[index] = normalscpy[std::stoi(val[2]) - 1];
+					}
+					else
+					{
+						normals[index] = { 0., 0., 0. };
+					}
+				}
+				else
+				{
+					uvs.push_back({ 0., 0. });
+					addNormal = true;
+				}
+			}
+			if (addNormal)
+			{
+				glm::vec3 verts[3];
+				for (int i = 1; i < 4; i++)
+				{
+					std::vector<std::string> val;
+
+					split(v[i], val, '/');
+					verts[i - 1] = vertices[std::stoi(val[0]) - 1];
+				}
+				glm::vec3 v1 = verts[1] - verts[0];
+				glm::vec3 v2 = verts[2] - verts[0];
+				glm::vec3 normal(glm::normalize(glm::cross(v1, v2)));
+				normals.push_back(normal);
+				normals.push_back(normal);
+				normals.push_back(normal);
+			}
+		}
+	}
+	file.close();
+
 	modelData.vertices = vertices;
+	modelData.uvs = uvs;
+	modelData.normals = normals;
 	modelData.indices = indices;
 
-	file.close();
 
 	return modelData;
 }
