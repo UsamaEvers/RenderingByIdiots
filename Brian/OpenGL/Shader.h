@@ -1,20 +1,29 @@
 #pragma once
 #include <GL\glew.h>
+#include <glm/matrix.hpp>
+
 #include <map>
 #include <string>
 
 class Shader
 {
 public:
+	static Shader* CreateShader(std::string name);
+	static void ClearShaders();
+private:
+	static std::map<std::string, Shader> shaders;
+public:
 
-	Shader() {}
+	Shader() {};
+
 	Shader(std::string name);
 	~Shader();
 
 	GLuint GetShaderProgram();
 
-	static Shader* CreateShader(std::string name);
-	static void ClearShaders();
+	void AddUniformLocation(std::string uniformName);
+
+	void SetUniform(std::string name, glm::mat4 matrix);
 
 private:
 	
@@ -22,6 +31,6 @@ private:
 
 	GLuint m_ShaderProgram;
 	
-	static std::map<std::string, Shader> shaders;
+	std::map<std::string, GLuint> m_Uniforms;
 
 };

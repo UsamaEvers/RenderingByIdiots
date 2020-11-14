@@ -1,6 +1,7 @@
 #include "Shader.h"
+#include "Loaders.h"
+
 #include <iostream>
-#include <fstream>
 
 std::map<std::string, Shader> Shader::shaders;
 
@@ -19,59 +20,16 @@ void Shader::ClearShaders()
 	shaders.clear();
 }
 
-unsigned long getFileLength(std::ifstream& file)
-{
-	if (!file.good()) return 0;
-
-	unsigned long pos = file.tellg();
-	file.seekg(0, std::ios::end);
-	unsigned long len = file.tellg();
-	file.seekg(std::ios::beg);
-
-	return len;
-}
-
-GLchar* loadshader(const char* filename)
-{
-	unsigned long len;
-	std::ifstream file;
-	file.open(filename, std::ios::in); // opens as ASCII!
-	
-	len = getFileLength(file);
-
-	GLchar* ShaderSource;
-
-	ShaderSource = (GLchar*) new char[len + 1];
-	
-	 // len isn't always strlen cause some characters are stripped in ascii read...
-	 // it is important to 0-terminate the real length later, len is just max possible value... 
-	ShaderSource[len] = 0;
-
-	unsigned int i = 0;
-	while (file.good())
-	{
-		ShaderSource[i] = file.get();       // get character from file.
-		if (!file.eof())
-			i++;
-	}
-
-	ShaderSource[i] = 0;  // 0-terminate it at the correct position
-
-	file.close();
-
-	return ShaderSource;
-}
-
 Shader::Shader(std::string name)
 {
 	// load shader
-	GLchar* vertexShaderSource = loadshader((name + ".vs").c_str() );
+	GLchar* vertexShaderSource = Loaders::Loadshader((name + ".vs"));
 
-	GLchar* fragmentShaderSource = loadshader((name + ".fs").c_str());
+	GLchar* fragmentShaderSource = Loaders::Loadshader((name + ".fs"));
 
 	GLuint vertexShader = CreateShaderType(vertexShaderSource, GL_VERTEX_SHADER);
 	GLuint fragmentShader = CreateShaderType(fragmentShaderSource, GL_FRAGMENT_SHADER);
-	
+
 	delete vertexShaderSource;
 	delete fragmentShaderSource;
 
@@ -85,11 +43,13 @@ Shader::Shader(std::string name)
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-	
+
 }
 
 Shader::~Shader()
-{}
+{
+	m_Uniforms.clear();
+}
 
 GLuint Shader::CreateShaderType(GLchar* shaderCode, GLuint shaderType)
 {
@@ -113,4 +73,22 @@ GLuint Shader::CreateShaderType(GLchar* shaderCode, GLuint shaderType)
 GLuint Shader::GetShaderProgram()
 {
 	return m_ShaderProgram;
+}
+
+void Shader::AddUniformLocation(std::string uniformName)
+{
+	GLuint uniformLocation = glGetUniformLocation(m_ShaderProgram, uniformName.c_str());
+	m_Uniforms[uniformName] = uniformLocation;
+}
+
+void Shader::SetUniform(std::string name, glm::mat4 matrix)
+{
+	if (m_Uniforms.find(name) != m_Uniforms.end())
+	{
+		glUniformMatrix4fv(m_Uniforms[name], 1, GL_FALSE, &matrix[0][0]);
+	}
+	else
+	{
+		std::cout << "Uniform location " << name << "is not found!" << std::endl;
+	}
 }
