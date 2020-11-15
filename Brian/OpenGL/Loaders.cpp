@@ -178,9 +178,13 @@ ModelData Loaders::LoadModel(std::string filename)
 				glm::vec3 v1 = verts[1] - verts[0];
 				glm::vec3 v2 = verts[2] - verts[0];
 				glm::vec3 normal(glm::normalize(glm::cross(v1, v2)));
-				normals.push_back(normal);
-				normals.push_back(normal);
-				normals.push_back(normal);
+				for (int i = 1; i < 4; i++)
+				{
+					std::vector<std::string> val;
+
+					split(v[i], val, '/');
+					normals[std::stoi(val[0]) - 1] = normal;
+				}
 			}
 		}
 	}
