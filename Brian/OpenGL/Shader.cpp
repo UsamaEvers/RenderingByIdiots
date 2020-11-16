@@ -92,3 +92,15 @@ void Shader::SetUniform(std::string name, glm::mat4 matrix)
 		std::cout << "Uniform location " << name << "is not found!" << std::endl;
 	}
 }
+
+void Shader::SetUniform(std::string name, glm::vec3 val)
+{
+	if (m_Uniforms.find(name) != m_Uniforms.end())
+	{
+		glUniform3fv(m_Uniforms[name], 1, &val[0]);
+	}
+	else
+	{
+		std::cout << "Uniform location " << name << "is not found!" << std::endl;
+	}
+}

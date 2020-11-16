@@ -55,6 +55,10 @@ Mesh::Mesh(ModelData modelData)
 	m_Shader->AddUniformLocation("model");
 	m_Shader->AddUniformLocation("view");
 	m_Shader->AddUniformLocation("projection");
+	m_Shader->AddUniformLocation("uEyePosition");
+	m_Shader->AddUniformLocation("uColor");
+	m_Shader->AddUniformLocation("uCool");
+	m_Shader->AddUniformLocation("uWarm");
 }
 
 Mesh::~Mesh()
@@ -78,6 +82,11 @@ void Mesh::Render(Camera cam)
 	m_Shader->SetUniform("model", model);
 	m_Shader->SetUniform("view", view);
 	m_Shader->SetUniform("projection", projection);
+	m_Shader->SetUniform("uEyePosition", cam.GetTransform().GetPosition());
+	m_Shader->SetUniform("uColor", { 1., 1., 1. });
+	m_Shader->SetUniform("uCool", { 0., 0., .55 });
+	m_Shader->SetUniform("uWarm", { .8, .3, 0. });
+
 
 	glBindVertexArray(m_VAO);
 	glEnableVertexAttribArray(0);

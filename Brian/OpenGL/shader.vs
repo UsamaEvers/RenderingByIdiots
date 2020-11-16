@@ -8,13 +8,15 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-out vec2 uv;
-out vec3 normal;
+out vec2 vUv;
+out vec3 vNormal;
+out vec3 vPos;
 
 void main()
 {
-    normal = aNormal;
-	uv = aUv;
+	vUv = aUv;
+    vNormal = (model * vec4(aNormal, 0.)).xyz;
+    vPos = (model * vec4(aPos, 1.0)).xyz;
     mat4 mvpMatrix =  projection * view * model;
     gl_Position = mvpMatrix * vec4(aPos, 1.0);
 }

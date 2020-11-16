@@ -25,6 +25,8 @@ public:
 
 	void SetUniform(std::string name, glm::mat4 matrix);
 
+    void SetUniform(std::string name, glm::vec3 val);
+
 private:
 	
 	GLuint CreateShaderType(GLchar* shaderCode, GLuint shaderType);

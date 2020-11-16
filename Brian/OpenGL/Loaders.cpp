@@ -70,9 +70,10 @@ ModelData Loaders::LoadModel(std::string filename)
 {
 	ModelData modelData;
 
-	unsigned long len;
-	std::ifstream file;
-	file.open(filename, std::ios::in); // opens as ASCII!
+	FILE* file = fopen(filename.c_str(), "r");
+	if (file == NULL) {
+		printf("Impossible to open the file !\n");
+	}
 
 	std::vector<glm::vec3> vertices;
 
@@ -84,111 +85,61 @@ ModelData Loaders::LoadModel(std::string filename)
 
 	std::vector<int> indices;
 
-	std::string str;
-	while (std::getline(file, str)) {
+	while (1) {
 
-		std::vector<std::string> v;
+		char lineHeader[128];
+		// read the first word of the line
+		int res = fscanf(file, "%s", lineHeader);
+		if (res == EOF)
+			break; // EOF = End Of File. Quit the loop.
 
-		split(str, v, ' ');
-
-		if (v[0] == "v")
-		{
-			glm::vec3 vertex(std::stof(v[1]), std::stof(v[2]), std::stof(v[3]));
+		// else : parse lineHeader
+		if (strcmp(lineHeader, "v") == 0) {
+			glm::vec3 vertex;
+			fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
 			vertices.push_back(vertex);
 		}
-		else if (v[0] == "vt")
-		{
-			glm::vec2 uv(std::stof(v[1]), std::stof(v[2]));
+		else if (strcmp(lineHeader, "vt") == 0) {
+			glm::vec2 uv;
+			fscanf(file, "%f %f\n", &uv.x, &uv.y);
 			uvscpy.push_back(uv);
 		}
-		else if (v[0] == "vn")
-		{
-			glm::vec3 normal(std::stof(v[1]), std::stof(v[2]), std::stof(v[3]));
+		else if (strcmp(lineHeader, "vn") == 0) {
+			glm::vec3 normal;
+			fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
 			normalscpy.push_back(normal);
 		}
-		if (v[0] == "f")
-		{
-			bool addNormal = false;
-			for (int i = 1; i < 4; i++)
-			{
-				std::vector<std::string> val;
-
-				split(v[i], val, '/');
-				indices.push_back(std::stoi(val[0]) - 1);
-			}
+		else if (strcmp(lineHeader, "f") == 0) {
+			uvs.resize(vertices.size());
+			normals.resize(vertices.size());
+			break;
 		}
 	}
-	uvs.resize(indices.size());
-	normals.resize(indices.size());
-	file.close();
+	while (1) {
 
-	file.open(filename, std::ios::in); // opens as ASCII!
-
-	while (std::getline(file, str)) 
-	{
-
-		std::vector<std::string> v;
-
-		split(str, v, ' ');
-
-		if (v[0] == "f")
-		{
-			bool addNormal = false;
-			for (int i = 1; i < 4; i++)
-			{
-				std::vector<std::string> val;
-
-				split(v[i], val, '/');
-				int index = std::stoi(val[0]) - 1;
-				if (val.size() > 1)
-				{
-					if (val[1] != "")
-					{
-						uvs[index] = uvscpy[std::stoi(val[1]) - 1];
-					}
-					else
-					{
-						uvs[index] = { 0., 0. };
-					}
-					if (val[2] != "")
-					{
-						normals[index] = normalscpy[std::stoi(val[2]) - 1];
-					}
-					else
-					{
-						normals[index] = { 0., 0., 0. };
-					}
-				}
-				else
-				{
-					uvs.push_back({ 0., 0. });
-					addNormal = true;
-				}
+		char lineHeader[128];
+		// read the first word of the line
+		int res = fscanf(file, "%s", lineHeader);
+		if (res == EOF)
+			break; // EOF = End Of File. Quit the loop.
+		else if (strcmp(lineHeader, "f") == 0) {
+			std::string vertex1, vertex2, vertex3;
+			unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
+			int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
+			if (matches != 9) {
+				printf("File can't be read by our simple parser : ( Try exporting with other options\n");
 			}
-			if (addNormal)
-			{
-				glm::vec3 verts[3];
-				for (int i = 1; i < 4; i++)
-				{
-					std::vector<std::string> val;
-
-					split(v[i], val, '/');
-					verts[i - 1] = vertices[std::stoi(val[0]) - 1];
-				}
-				glm::vec3 v1 = verts[1] - verts[0];
-				glm::vec3 v2 = verts[2] - verts[0];
-				glm::vec3 normal(glm::normalize(glm::cross(v1, v2)));
-				for (int i = 1; i < 4; i++)
-				{
-					std::vector<std::string> val;
-
-					split(v[i], val, '/');
-					normals[std::stoi(val[0]) - 1] = normal;
-				}
-			}
+			indices.push_back(vertexIndex[0]-1);
+			indices.push_back(vertexIndex[1]-1);
+			indices.push_back(vertexIndex[2]-1);
+			uvs[vertexIndex[0]-1] = uvscpy[uvIndex[0]-1];
+			uvs[vertexIndex[1]-1] = uvscpy[uvIndex[1]-1];
+			uvs[vertexIndex[2]-1] = uvscpy[uvIndex[2]-1];
+			normals[vertexIndex[0]-1] = normalscpy[normalIndex[0]-1];
+			normals[vertexIndex[1]-1] = normalscpy[normalIndex[1]-1];
+			normals[vertexIndex[2]-1] = normalscpy[normalIndex[2]-1];
 		}
 	}
-	file.close();
 
 	modelData.vertices = vertices;
 	modelData.uvs = uvs;
