@@ -1,12 +1,11 @@
 #pragma once
-
 #include <GL\glew.h>
 #include <glm/mat4x4.hpp>
 #include <vector>
 #include "Shader.h"
-#include "Transform.h"
 
 class Camera;
+class Transform;
 
 struct ModelData
 {
@@ -23,9 +22,7 @@ public:
 	Mesh(ModelData modelData);
 	~Mesh();
 
-	void Render(Camera cam);
-	
-	Transform& GetTransform() { return m_Transform; };
+	void Render(Transform transform, Camera cam);
 
 private:
 	std::vector<GLuint> m_VBOS;
@@ -33,8 +30,6 @@ private:
 	GLuint m_EBO;
 	GLuint m_NumVertices;
 	GLuint m_NumIndices;
-
-	Transform m_Transform;
 
 	Shader* m_Shader;
 };

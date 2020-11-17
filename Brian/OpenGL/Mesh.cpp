@@ -1,8 +1,11 @@
 ﻿#include "Mesh.h"
+
+#include "Camera.h"
+#include "Transform.h"
+
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
-#include "Camera.h"
 
 Mesh::Mesh(ModelData modelData)
 {
@@ -70,22 +73,21 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &m_EBO);
 }
 
-void Mesh::Render(Camera cam)
+void Mesh::Render(Transform transform, Camera cam)
 {
 	glUseProgram(m_Shader->GetShaderProgram());
 
-	
-	glm::mat4 model = m_Transform.GetWorldMatrix();
+	glm::mat4 model = transform.GetWorldMatrix();
 	glm::mat4 view = cam.GetViewMatrix();
 	glm::mat4 projection = cam.GetProjectionMatrix();
 
 	m_Shader->SetUniform("model", model);
 	m_Shader->SetUniform("view", view);
 	m_Shader->SetUniform("projection", projection);
-	m_Shader->SetUniform("uEyePosition", cam.GetTransform().GetPosition());
+	m_Shader->SetUniform("uEyePosition", cam.GetPosition());
 	m_Shader->SetUniform("uColor", { 1., 1., 1. });
 	m_Shader->SetUniform("uCool", { 0., 0., .55 });
-	m_Shader->SetUniform("uWarm", { .8, .3, 0. });
+	m_Shader->SetUniform("uWarm", { .3, .3, 0. });
 
 
 	glBindVertexArray(m_VAO);

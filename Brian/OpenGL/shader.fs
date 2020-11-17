@@ -12,7 +12,7 @@ in vec3 vPos;
 
 out vec4 FragColor;
 
-#define lightPos (vec3(5., 20., 0.))
+const vec3 lightPos = vec3(5., 20., 0.);
 
 vec3 cCool()
 {

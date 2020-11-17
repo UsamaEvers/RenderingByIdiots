@@ -1,10 +1,14 @@
 #pragma once
+#include "Component.h"
+
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 
-class Transform
+class Transform : public Component
 {
 public:
+
+	static std::string GetName() { return "Transform"; };
 
 	Transform();
 	Transform(glm::vec3 pos, glm::vec3 rot, glm::vec3 scl);

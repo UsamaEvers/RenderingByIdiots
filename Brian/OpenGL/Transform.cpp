@@ -3,14 +3,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 Transform::Transform() 
-	: m_Position(0.)
+	: Component(GetName())
+	, m_Position(0.)
 	, m_Rotation(0.)
 	, m_Scale(1.)
 {
 }
 
 Transform::Transform(glm::vec3 pos, glm::vec3 rot, glm::vec3 scl)
-	: m_Position(pos)
+	: Component(GetName())
+	, m_Position(pos)
 	, m_Rotation(rot)
 	, m_Scale(scl)
 {
