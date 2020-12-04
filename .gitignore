@@ -1,28 +1,7 @@
 
-Brian/.vs/Brian/v16/ipch/AutoPCH/2327a92ab2250ba4/APPLICATION.ipch
-Brian/.vs/Brian/v16/Browse.VC.db-wal
-Brian/.vs/Brian/v16/Browse.VC.db
-Brian/.vs/Brian/v16/Browse.VC.opendb
-Brian/.vs/Brian/v16/Browse.VC.db-shm
-.vs/slnx.sqlite
-Brian/x64/Debug/OpenGL.pdb
-Brian/x64/Debug/OpenGL.ilk
-Brian/x64/Debug/OpenGL.exe
-Brian/OpenGL/x64/Debug/vc142.pdb
-Brian/OpenGL/x64/Debug/vc142.idb
-Brian/OpenGL/x64/Debug/OpenGL.tlog/OpenGL.lastbuildstate
-Brian/OpenGL/x64/Debug/OpenGL.tlog/link.write.1.tlog
-Brian/OpenGL/x64/Debug/OpenGL.tlog/link.read.1.tlog
-Brian/OpenGL/x64/Debug/OpenGL.tlog/link.command.1.tlog
-Brian/OpenGL/x64/Debug/OpenGL.tlog/CL.write.1.tlog
-Brian/OpenGL/x64/Debug/OpenGL.tlog/CL.read.1.tlog
-Brian/OpenGL/x64/Debug/OpenGL.tlog/CL.command.1.tlog
-Brian/OpenGL/x64/Debug/OpenGL.log
-Brian/OpenGL/x64/Debug/OpenGL.exe.recipe
-Brian/OpenGL/x64/Debug/Application.obj
-Brian/.vs/Brian/v16/.suo
-Brian/.vs/Brian/v15/Browse.VC.db
-Brian/.vs/Brian/v15/.suo
+Brian/x64/
+Brian/OpenGL/x64/
+Brian/.vs/
 *.txt
 Brian/OpenGL/OpenGL.vcxproj.user
 Brian/OpenGL/x64/Debug/OpenGL.Build.CppClean.log
@@ -33,6 +12,7 @@ Brian/OpenGL/OpenGL.vcxproj.user
 Brian/OpenGL/OpenGL.vcxproj.user
 Brian/.vs/Brian/v16/ipch/AutoPCH/20b84913d30fb354/APPLICATION.ipch
 Usama/x64/Debug
+<<<<<<< HEAD
 Usama/.vs/Usama/v15/.suo
 Usama/.vs/Usama/v15/Browse.VC.db
 Usama/.vs/Usama/v16/.suo
@@ -55,3 +35,9 @@ Usama/.vs/Usama/v16/Browse.VC.db-shm
 Usama/.vs/Usama/v16/Browse.VC.db-wal
 Usama/.vs/Usama/v16/Browse.VC.opendb
 Usama/.vs/Usama/v16/ipch/AutoPCH/f046ffa9b352fc56/APPLICATION.ipch
+=======
+Usama/.vs/
+Usama/OpenGL/x64/Debug/
+Brian/Dependencies/GLM/glm/out/
+.vs/
+>>>>>>> 59f4777ce547564eb2d78bc4dfb09471627b0cad
