@@ -14,11 +14,9 @@ class Mesh
 {
 private:
 	GLuint EBO, VBO, texture1, texture2 = 0;
-
 public:
 	Mesh();
 	~Mesh();
-	void draw();
 	GLuint GetEBO() { return EBO; }
 	GLuint GetVBO() { return VBO; }
 	bool Draw(GLuint);
