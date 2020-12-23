@@ -151,12 +151,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="inc\stb_image.h" />
     <ClInclude Include="inc\Mesh.h" />
     <ClInclude Include="inc\Shader.h" />
