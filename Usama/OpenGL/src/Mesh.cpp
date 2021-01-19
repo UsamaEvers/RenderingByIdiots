@@ -4,60 +4,6 @@
 Mesh::Mesh()
 {
 
-	//	unsigned int normalArray[] = {  // note that we start from 0!
-	//		0, 1, 3,   // first triangle
-	//		1, 2, 3    // second triangle
-	//	};
-//	VertexPosColTex Vertexa[] = {
-//
-//		{{  0.5f,  0.5f, 0.0f, }, { 1., 0., 0. }, {  2.0f, 2.0f} },    // top right
-//		{{  0.5f, -0.5f, 0.0f, }, { 0., 1., 0. }, {  2.0f, 0.0f} },    // bottom right
-//		{{ -0.5f, -0.5f, 0.0f, }, { 0., 0., 1. }, {  0.0f, 0.0f} },   // bottom left
-//		{{ -0.5f,  0.5f, 0.0f, }, { 1., 1., 0. }, {  0.0f, 2.0f} },  // top left 
-//	};
-	//VertexPosColTex Vertex[] = {
-	//{{-0.5f, -0.5f, -0.5f,}, { 1., 0., 0. }, { 0.0f, 0.0f }}, //0
-	//{{ 0.5f, -0.5f, -0.5f,}, { 1., 0., 0. }, { 1.0f, 0.0f }}, //1
-	//{{ 0.5f,  0.5f, -0.5f,}, { 1., 0., 0. }, { 1.0f, 1.0f }}, //2
-	//{{ 0.5f,  0.5f, -0.5f,}, { 1., 0., 0. }, { 1.0f, 1.0f }}, //2
-	//{{-0.5f,  0.5f, -0.5f,}, { 1., 0., 0. }, { 0.0f, 1.0f }}, //3
-	//{{-0.5f, -0.5f, -0.5f,}, { 1., 0., 0. }, { 0.0f, 0.0f }}, //0
-	//											 
-	//{{-0.5f, -0.5f,  0.5f,}, { 1., 0., 0. }, { 0.0f, 0.0f }}, //4
-	//{{ 0.5f, -0.5f,  0.5f,}, { 1., 0., 0. }, { 1.0f, 0.0f }}, //5
-	//{{ 0.5f,  0.5f,  0.5f,}, { 1., 0., 0. }, { 1.0f, 1.0f }}, //6
-	//{{ 0.5f,  0.5f,  0.5f,}, { 1., 0., 0. }, { 1.0f, 1.0f }}, //6
-	//{{-0.5f,  0.5f,  0.5f,}, { 1., 0., 0. }, { 0.0f, 1.0f }}, //7
-	//{{-0.5f, -0.5f,  0.5f,}, { 1., 0., 0. }, { 0.0f, 0.0f }}, //4
-	//											 
-	//{{-0.5f,  0.5f,  0.5f,}, { 1., 0., 0. }, { 1.0f, 0.0f }}, //8
-	//{{-0.5f,  0.5f, -0.5f,}, { 1., 0., 0. }, { 1.0f, 1.0f }}, //9
-	//{{-0.5f, -0.5f, -0.5f,}, { 1., 0., 0. }, { 0.0f, 1.0f }}, //10
-	//{{-0.5f, -0.5f, -0.5f,}, { 1., 0., 0. }, { 0.0f, 1.0f }}, //10
-	//{{-0.5f, -0.5f,  0.5f,}, { 1., 0., 0. }, { 0.0f, 0.0f }}, //4
-	//{{-0.5f,  0.5f,  0.5f,}, { 1., 0., 0. }, { 1.0f, 0.0f }}, //8
-	//									 
-	//{{ 0.5f,  0.5f,  0.5f,}, { 1., 0., 0. }, { 1.0f, 0.0f }}, //11
-	//{{ 0.5f,  0.5f, -0.5f,}, { 1., 0., 0. }, { 1.0f, 1.0f }}, //2
-	//{{ 0.5f, -0.5f, -0.5f,}, { 1., 0., 0. }, { 0.0f, 1.0f }}, //12
-	//{{ 0.5f, -0.5f, -0.5f,}, { 1., 0., 0. }, { 0.0f, 1.0f }}, //12
-	//{{ 0.5f, -0.5f,  0.5f,}, { 1., 0., 0. }, { 0.0f, 0.0f }}, //13
-	//{{ 0.5f,  0.5f,  0.5f,}, { 1., 0., 0. }, { 1.0f, 0.0f }}, //11
-	//									 
-	//{{-0.5f, -0.5f, -0.5f,}, { 1., 0., 0. }, { 0.0f, 1.0f }}, //10
-	//{{ 0.5f, -0.5f, -0.5f,}, { 1., 0., 0. }, { 1.0f, 1.0f }}, //14
-	//{{ 0.5f, -0.5f,  0.5f,}, { 1., 0., 0. }, { 1.0f, 0.0f }}, //5
-	//{{ 0.5f, -0.5f,  0.5f,}, { 1., 0., 0. }, { 1.0f, 0.0f }}, //5
-	//{{-0.5f, -0.5f,  0.5f,}, { 1., 0., 0. }, { 0.0f, 0.0f }}, //4
-	//{{-0.5f, -0.5f, -0.5f,}, { 1., 0., 0. }, { 0.0f, 1.0f }}, //10
-	//						 
-	//{{-0.5f,  0.5f, -0.5f,}, { 1., 0., 0. }, { 0.0f, 1.0f }}, //3
-	//{{ 0.5f,  0.5f, -0.5f,}, { 1., 0., 0. }, { 1.0f, 1.0f }}, //2
-	//{{ 0.5f,  0.5f,  0.5f,}, { 1., 0., 0. }, { 1.0f, 0.0f }}, //11
-	//{{ 0.5f,  0.5f,  0.5f,}, { 1., 0., 0. }, { 1.0f, 0.0f }}, //11
-	//{{-0.5f,  0.5f,  0.5f,}, { 1., 0., 0. }, { 0.0f, 0.0f }}, //14
-	//{{-0.5f,  0.5f, -0.5f,}, { 1., 0., 0. }, { 0.0f, 1.0f }}  //3
-	//};					
 	VertexPosColTex Vertex[] = {
 	{{-0.5f, -0.5f, -0.5f,}, { 1., 0., 0. }, { 0.0f, 0.0f }}, //0
 	{{ 0.5f, -0.5f, -0.5f,}, { 1., 0., 0. }, { 1.0f, 0.0f }}, //1
@@ -90,19 +36,30 @@ Mesh::Mesh()
 	2,  6,  3,
 	6,  7,  3
 	};
-
+	GLuint EBO, VBO = 0;
+	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &EBO);
 	glGenBuffers(1, &VBO);
+	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex), Vertex, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(normalArray), normalArray, GL_STATIC_DRAW);
+	
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPosColTex), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPosColTex), (float*)(3 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexPosColTex), (float*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	
 	std::string Container = "yes/container.jpg";
 	std::string CryLaugh = "yes/Sans.jpg";
 	assert(GenTexture(texture1, Container, false));
 	assert(GenTexture(texture2, CryLaugh, false));
+	glBindVertexArray(0);
 }
 
 Mesh::~Mesh()
@@ -115,7 +72,7 @@ void Mesh::processInput(GLFWwindow* window)
 	float currentFrame = glfwGetTime();
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
-	float cameraSpeed = 2.5f * deltaTime;
+	float cameraSpeed = 5.0f * deltaTime;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		cameraPos += cameraSpeed * cameraFront;
@@ -172,7 +129,6 @@ void Mesh::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	cameraFront = glm::normalize(direction);
 }
 
-
 bool Mesh::Draw(GLuint shaderProgram, GLFWwindow* window)
 {
 
@@ -182,8 +138,7 @@ bool Mesh::Draw(GLuint shaderProgram, GLFWwindow* window)
 	direction.y = sin(glm::radians(pitch));
 	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 	cameraFront = glm::normalize(direction);
-	if (pitch > 0.0f)
-		int a;
+
 	glm::vec3 cubePositions[] = {
 	glm::vec3(0.0f,  0.0f,  0.0f),
 	glm::vec3(2.0f,  5.0f, -15.0f),
@@ -197,28 +152,12 @@ bool Mesh::Draw(GLuint shaderProgram, GLFWwindow* window)
 	glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
+	glBindVertexArray(VAO);
 
-	glm::mat4 projection;
 	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
-	glm::mat4 view;
-	view = view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-
-
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPosColTex), 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPosColTex), (float*)(3 * sizeof(float)));
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexPosColTex), (float*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	//unsigned int transformLoc = glGetUniformLocation(shaderProgram, "modelmat4");
-	//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(Matrix4));
-	//int modelLoc = glGetUniformLocation(shaderProgram, "model");
-	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	int viewlLoc = glGetUniformLocation(shaderProgram, "view");
 	glUniformMatrix4fv(viewlLoc, 1, GL_FALSE, glm::value_ptr(view));
 	int proj = glGetUniformLocation(shaderProgram, "projection");
@@ -227,8 +166,6 @@ bool Mesh::Draw(GLuint shaderProgram, GLFWwindow* window)
 
 	glUniform1i(glGetUniformLocation(shaderProgram, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgram, "texture2"), 1);
-
-
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	glActiveTexture(GL_TEXTURE1);
@@ -240,13 +177,14 @@ bool Mesh::Draw(GLuint shaderProgram, GLFWwindow* window)
 		model = glm::translate(model, cubePositions[i]);
 		float angle = 20.0f * i;
 		model = glm::rotate(model, glm::radians(0.0f + i * 10), glm::vec3(1.0f, 0.3f, 0.5f));
+		
+		
 		int modelLoc = glGetUniformLocation(shaderProgram, "model");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 	}
-	//glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-	//glDrawArrays(GL_TRIANGLES, 0, 36);
 
+	glBindVertexArray(0);
 	return true;
 }
 bool Mesh::GenTexture(GLuint& texture, std::string textName, bool alphaEnable)
@@ -308,8 +246,6 @@ bool Mesh::GenTexture(GLuint& texture, std::string textName, bool alphaEnable)
 			std::cout << "Failed to load texture" << std::endl;
 			return false;
 		}
-		//SAY GAY IF YOU THINK MY MIC IS STUPID
-		//AND THAT i SHOULD NEVER JOIN CALLS AGAIN!
 		stbi_set_flip_vertically_on_load(false);
 
 	}

@@ -41,3 +41,6 @@ Usama/OpenGL/x64/Debug/
 Brian/Dependencies/GLM/glm/out/
 .vs/
 >>>>>>> 59f4777ce547564eb2d78bc4dfb09471627b0cad
+/Usama/x64/Release
+*.diagsession
+/Usama/OpenGL/x64/Release
