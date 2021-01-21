@@ -12,22 +12,21 @@
 class Camera
 {
 private:
-	glm::mat4 projection;
-	glm::mat4 view;
 
+	
 
-	glm::vec3 m_Position = glm::vec3(0.0f, 0.0f, 3.0f);
-	glm::vec3 m_TargetPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-
-	glm::vec3 cameraDirection = glm::normalize(m_Position - m_TargetPosition);
-	glm::vec3 cameraRight = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), cameraDirection));
-	glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
 
 public:
-	Camera();
+	Camera(glm::vec3 eyePos) {
+		m_Position = eyePos;
+	}
+	Camera() {}
 	~Camera();
-	void  Init();
-
+	glm::vec2 PitchYaw = glm::vec2(0.0f, -90.f);
+	glm::vec3 m_Direction = glm::vec3(0, 0, 0);
+	glm::vec3 m_Position = glm::vec3(0.0f, 0.0f, 3.0f);
+	glm::mat4 m_Projection = glm::mat4(1.0f);
+	glm::mat4 m_View = glm::mat4(1.0f);
+	bool Update(float deltaTime);
 };
 

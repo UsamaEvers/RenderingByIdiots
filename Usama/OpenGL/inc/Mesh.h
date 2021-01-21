@@ -22,27 +22,15 @@ private:
 	GLuint VAO,texture1, texture2 = 0;
 	float deltaTime = 0.0f;	// Time between current frame and last frame
 	float lastFrame = 0.0f; // Time of last frame
-	bool firstMouse;
-	float lastX, lastY;
-	float yaw = -90.f;
-	float pitch = 0;;
+
+
 
 public:
 	Mesh();
 	~Mesh();
-	void processInput(GLFWwindow* window);
-	void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 	bool Draw(GLuint,GLFWwindow* window);
+	bool Draw(glm::mat4 viewmat, glm::mat4 projmat, GLuint shaderProgram, GLFWwindow* window);
 	bool GenTexture(GLuint& texture, std::string textName, bool alphaEnable);
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 10.0f);
-	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::mat4 projection;
-	glm::mat4 view;
-
-	glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
-	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-	glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
+	
 };
 

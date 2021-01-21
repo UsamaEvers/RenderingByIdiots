@@ -7,8 +7,16 @@
 #include "../inc/Mesh.h"
 #include "../inc/Shader.h"
 #include "../inc/ParticleGenerator.h"
+#include "../inc/Camera.h"
+#include "../inc/Input.h"
+
 #include <time.h>
 
+
+void mouseCallback(GLFWwindow* window, double xpos, double ypos );
+bool firstMouse;
+float lastX, lastY;
+Camera thecamera = Camera();
 int main(void)
 {
 	GLFWwindow* window;
@@ -28,17 +36,17 @@ int main(void)
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
+		bool firstMouse;
+	float lastX, lastY;
 	if (glewInit() != GLEW_OK)
 		std::cout << "Glew init was not equal to GLEW_OK" << std::endl;
 
 	Mesh mesh;
 	ParticleGenerator ParticleGenerator;
 
-
 	Shader shader("Shaders/SimpleShader.vert", "Shaders/SimpleShader.frag");
 	Shader shader1("Shaders/ParticleShader.vert", "Shaders/ParticleShader.frag");
-
+	Input theInput = Input();
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
@@ -47,7 +55,8 @@ int main(void)
 	float elapsedtime = 0;
 	float previoustime = 0;
 
-	glClearColor(0.4, 0.6, 0.9, 1.0f);
+	//glClearColor(0.4, 0.6, 0.9, 1.0f);
+	glClearColor(0.0, 0.0, 0.0, 1.0f);
 	while (!glfwWindowShouldClose(window))
 	{
 			
@@ -56,12 +65,15 @@ int main(void)
 		float currenttime = clock();
 		elapsedtime =  0.001f*(currenttime- previoustime);
 		previoustime = currenttime;
+		theInput.processInput(window, elapsedtime, thecamera);
+		glfwSetCursorPosCallback(window, mouseCallback);
+		thecamera.Update(elapsedtime);
 		glUseProgram(shader.getID());
-		mesh.Draw(shader.getID(), window);
+		mesh.Draw(thecamera.m_View, thecamera.m_Projection, shader.getID(), window);
 		glUseProgram(shader1.getID());
 		ParticleGenerator.Update(elapsedtime, 3, glm::vec3(0,0,0));
-		ParticleGenerator.Draw(mesh.projection, mesh.view, shader1.getID(), mesh.cameraPos);
-		
+		ParticleGenerator.Draw(thecamera.m_Projection, thecamera.m_View, shader1.getID());
+
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -73,4 +85,33 @@ int main(void)
 
 	glfwTerminate();
 	return 0;
+}
+
+void mouseCallback(GLFWwindow* window, double xpos, double ypos)
+{
+
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos;
+	lastX = xpos;
+	lastY = ypos;
+
+	float sensitivity = 0.1f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	thecamera.PitchYaw.y += xoffset;
+	thecamera.PitchYaw.x += yoffset;
+
+	if (thecamera.PitchYaw.x > 89.0f)
+		thecamera.PitchYaw.x = 89.0f;
+	if (thecamera.PitchYaw.x < -89.0f)
+		thecamera.PitchYaw.x = -89.0f;
+
 }

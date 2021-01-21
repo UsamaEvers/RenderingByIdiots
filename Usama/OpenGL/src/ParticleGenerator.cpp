@@ -48,9 +48,9 @@ bool ParticleGenerator::Init()
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 
-	std::string crylaugh = "yes/CRYLAUGH.png";
-	std::string sans = "yes/Sans.png";
-	std::string CREEPER = "yes/creeperColored.png";
+	std::string crylaugh = "Resources/CRYLAUGH.png";
+	std::string sans = "Resources/Sans.png";
+	std::string CREEPER = "Resources/creeperColored.png";
 
 	assert(GenTexture(texture1, crylaugh, true));
 	assert(GenTexture(texture2, sans, true));
@@ -65,7 +65,7 @@ bool ParticleGenerator::Init()
 glm::vec4 lerp(glm::vec4 v0, glm::vec4 v1, float t) {
 	return v0 + t * (v1 - v0);
 }
-bool ParticleGenerator::Draw(glm::mat4 proj, glm::mat4 view, GLuint shaderProgram, glm::vec3 campos)
+bool ParticleGenerator::Draw(glm::mat4 proj, glm::mat4 view, GLuint shaderProgram)
 {
 	// use additive blending to give it a 'glow' effect
 	glEnable(GL_BLEND);
@@ -133,7 +133,7 @@ bool ParticleGenerator::Update(float dt, unsigned int newParticles, glm::vec3 of
 	{
 		Particle& p = this->particles[i];
 		p.LifeRemaining -= dt; // reduce life
-		
+		p.Position -= glm::vec3(0, 0.5f * dt, 0.0f);
 	}
 
 	return true;

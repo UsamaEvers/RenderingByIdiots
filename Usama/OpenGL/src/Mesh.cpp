@@ -55,8 +55,8 @@ Mesh::Mesh()
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 	
-	std::string Container = "yes/container.jpg";
-	std::string CryLaugh = "yes/Sans.jpg";
+	std::string Container = "Resources/container.jpg";
+	std::string CryLaugh = "Resources/Sans.jpg";
 	assert(GenTexture(texture1, Container, false));
 	assert(GenTexture(texture2, CryLaugh, false));
 	glBindVertexArray(0);
@@ -65,79 +65,11 @@ Mesh::Mesh()
 Mesh::~Mesh()
 {
 }
-void Mesh::processInput(GLFWwindow* window)
+
+
+
+bool Mesh::Draw(glm::mat4 viewmat, glm::mat4 projmat,GLuint shaderProgram, GLFWwindow* window)
 {
-
-
-	float currentFrame = glfwGetTime();
-	deltaTime = currentFrame - lastFrame;
-	lastFrame = currentFrame;
-	float cameraSpeed = 5.0f * deltaTime;
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		cameraPos += cameraSpeed * cameraFront;
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		cameraPos -= cameraSpeed * cameraFront;
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		pitch += 6 * cameraSpeed;
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		pitch += -6 * cameraSpeed;
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		yaw += 6 * cameraSpeed;
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		yaw += -6 *cameraSpeed;
-
-
-}
-
-void Mesh::mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
-
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
-
-	float sensitivity = 0.1f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(direction);
-}
-
-bool Mesh::Draw(GLuint shaderProgram, GLFWwindow* window)
-{
-
-	processInput(window);
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(direction);
 
 	glm::vec3 cubePositions[] = {
 	glm::vec3(0.0f,  0.0f,  0.0f),
@@ -155,13 +87,10 @@ bool Mesh::Draw(GLuint shaderProgram, GLFWwindow* window)
 
 	glBindVertexArray(VAO);
 
-	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-
 	int viewlLoc = glGetUniformLocation(shaderProgram, "view");
-	glUniformMatrix4fv(viewlLoc, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(viewlLoc, 1, GL_FALSE, glm::value_ptr(viewmat));
 	int proj = glGetUniformLocation(shaderProgram, "projection");
-	glUniformMatrix4fv(proj, 1, GL_FALSE, glm::value_ptr(projection));
+	glUniformMatrix4fv(proj, 1, GL_FALSE, glm::value_ptr(projmat));
 
 
 	glUniform1i(glGetUniformLocation(shaderProgram, "texture1"), 0);

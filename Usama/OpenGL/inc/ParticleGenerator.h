@@ -36,6 +36,7 @@ public:
 	~ParticleGenerator();
 	bool Init();
 	bool Draw(glm::mat4 proj, glm::mat4 view, GLuint shaderProgram, glm::vec3);
+	bool Draw(glm::mat4 proj, glm::mat4 view, GLuint shaderProgram);
 	bool Update(float dt, unsigned int newParticles, glm::vec3 offset);
 	bool GenTexture(GLuint& texture, std::string textName, bool alphaEnable);
 	int firstUnusedParticle();
