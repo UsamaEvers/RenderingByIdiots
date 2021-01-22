@@ -9,7 +9,6 @@
 #include <glm/vec2.hpp>
 #include <vector>
 #include <GLFW/glfw3.h>
-#include "../inc/Texture.h"
 
 struct VertexPosColTex
 {
@@ -17,20 +16,37 @@ struct VertexPosColTex
 	glm::vec3 col;
 	glm::vec2 tex;
 };
+struct VertexPosTex
+{
+	glm::vec3 Pos;
+	glm::vec2 tex;
+};
+enum MeshName
+{
+	CUBE,
+	QUAD
+};
+struct MeshBuffers
+{
+	MeshName meshname;
+	GLuint VAO, VBO, EBO, totalTextures = 0;
+	std::vector<GLuint> textures;
+};
+
 class Mesh
 {
 private:
-	GLuint VAO,texture1, texture2 = 0;
-	float deltaTime = 0.0f;	// Time between current frame and last frame
-	float lastFrame = 0.0f; // Time of last frame
 
-
+protected:
+	std::vector<GLuint> textures;
+	std::vector<MeshBuffers> allMeshes;
+	bool BindTextures(MeshBuffers& mesh, GLuint shaderProgram);
 
 public:
 	Mesh();
 	~Mesh();
-	bool Draw(GLuint,GLFWwindow* window);
-	bool Draw(glm::mat4 viewmat, glm::mat4 projmat, GLuint shaderProgram, GLFWwindow* window);
 	
+	bool CreateCube();
+	bool CreateQuad();
+	virtual bool Draw(glm::mat4 viewmat, glm::mat4 projmat, GLuint shaderProgram);
 };
-

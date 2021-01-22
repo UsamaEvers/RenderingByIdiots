@@ -8,7 +8,7 @@
 #include <glm/vec2.hpp>
 #include <vector>
 #include <GLFW/glfw3.h>
-
+#include "Mesh.h"
 
 struct Particle {
 	glm::vec3 Position;
@@ -19,15 +19,10 @@ struct Particle {
 	float	  LifeRemaining;
 
 };
-struct VertexPosTex
-{
-	glm::vec3 Pos;
-	glm::vec2 tex;
-};
-class ParticleGenerator 
+
+class ParticleGenerator :  public Mesh
 {
 private:
-	GLuint VAO, texture1, texture2, texture3;
 	int amount = 1000;
 	std::vector<Particle> particles;
 	unsigned int lastUsedParticle = 0;

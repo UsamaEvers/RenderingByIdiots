@@ -38,12 +38,14 @@ int main(void)
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		bool firstMouse;
+	bool firstMouse;
 	float lastX, lastY;
 	if (glewInit() != GLEW_OK)
 		std::cout << "Glew init was not equal to GLEW_OK" << std::endl;
 	
 	Mesh mesh;
+	
+	mesh.CreateCube();
 	ParticleGenerator ParticleGenerator;
 	Shader shader("Shaders/SimpleShader.vert", "Shaders/SimpleShader.frag");
 	Shader shader1("Shaders/ParticleShader.vert", "Shaders/ParticleShader.frag");
@@ -55,11 +57,10 @@ int main(void)
 	/* Loop until the user closes the window */
 	float elapsedtime = 0;
 	float previoustime = 0;
-	//glClearColor(0.4, 0.6, 0.9, 1.0f);
-	glClearColor(0.0, 0.0, 0.0, 1.0f);
+	glClearColor(0.4, 0.6, 0.9, 1.0f);
+	//glClearColor(0.0, 0.0, 0.0, 1.0f);
 	while (!glfwWindowShouldClose(window))
 	{
-			
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		float currenttime = clock();
@@ -69,7 +70,7 @@ int main(void)
 		glfwSetCursorPosCallback(window, mouseCallback);
 		thecamera.Update(elapsedtime);
 		glUseProgram(shader.getID());
-		mesh.Draw(thecamera.m_View, thecamera.m_Projection, shader.getID(), window);
+		mesh.Draw(thecamera.m_View, thecamera.m_Projection, shader.getID());
 		glUseProgram(shader1.getID());
 		ParticleGenerator.Update(elapsedtime, 3, glm::vec3(0,0,0));
 		ParticleGenerator.Draw(thecamera.m_Projection, thecamera.m_View, shader1.getID());

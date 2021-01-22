@@ -20,7 +20,6 @@ private:
 	GLuint i_CheckIfTextureExists(std::string textName, bool alphaEnable);
 	bool i_GenTexture(std::string textName, bool alphaEnable);
 	std::map<std::string, GLuint> allTextures;
-
 public:
 	static void InitTextureManager();
 	static GLuint CheckIfTextureExists(std::string textName, bool alphaEnable);

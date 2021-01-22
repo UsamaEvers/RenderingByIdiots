@@ -3,6 +3,16 @@
 
 TextureManager* TextureManager::instance;	
 
+TextureManager::TextureManager()
+{
+
+}
+
+void TextureManager::InitTextureManager()
+{
+	instance = new TextureManager();
+}
+
 bool TextureManager::i_GenTexture(std::string textName, bool alphaEnable)
 {
 
@@ -62,22 +72,10 @@ bool TextureManager::i_GenTexture(std::string textName, bool alphaEnable)
 	return true;
 }
 
-void TextureManager::InitTextureManager()
-{
-	instance = new TextureManager();
-}
-
 GLuint TextureManager::CheckIfTextureExists(std::string textName, bool alphaEnable)
 {
 	assert(instance);
 	return instance->i_CheckIfTextureExists(textName, alphaEnable);
-}
-
-
-
-TextureManager::TextureManager() 
-{
-
 }
 
 GLuint TextureManager::i_CheckIfTextureExists(std::string textName, bool alphaEnable)

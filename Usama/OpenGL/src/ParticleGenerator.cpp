@@ -14,52 +14,8 @@ ParticleGenerator::~ParticleGenerator()
 
 bool ParticleGenerator::Init()
 {
-	
-	VertexPosTex particle_quad[] =
-	{
-	{{-0.5f, -0.5f, -0.5f,}, { 0.0f, 0.0f }}, //0
-	{{ 0.5f, -0.5f, -0.5f,}, { 1.0f, 0.0f }}, //1
-	{{ 0.5f,  0.5f, -0.5f,}, { 1.0f, 1.0f }}, //2
-	{{-0.5f,  0.5f, -0.5f,}, { 0.0f, 1.0f }}, //3
-	};
-
-	unsigned int normalArray[] = {
-		0 ,	2,	1,
-		2,	0,	3,
-	};
-	GLuint EBO, VBO = 0;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-
-	//bind vao
-	glBindVertexArray(VAO);
-
-	//bind vbo 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_STATIC_DRAW);
-
-	//bind ebo
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(normalArray), normalArray, GL_STATIC_DRAW);
-
-	//bind vbo and ebo to vao
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPosTex), 0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexPosTex), (float*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-
-	std::string crylaugh = "Resources/CRYLAUGH.png";
-	std::string sans = "Resources/Sans.png";
-	std::string CREEPER = "Resources/creeperColored.png";
-
-	texture1 = TextureManager::CheckIfTextureExists(crylaugh, true);
-	texture2 = TextureManager::CheckIfTextureExists(sans, true);
-	texture3 = TextureManager::CheckIfTextureExists(CREEPER, false);
-
-	
-
-	// create "amount" of particles
+	CreateQuad();
+		
 	for (unsigned int i = 0; i < amount; ++i)
 		this->particles.push_back(Particle());
 	return false;
@@ -69,26 +25,7 @@ glm::vec4 lerp(glm::vec4 v0, glm::vec4 v1, float t) {
 }
 bool ParticleGenerator::Draw(glm::mat4 proj, glm::mat4 view, GLuint shaderProgram)
 {
-	// use additive blending to give it a 'glow' effect
 	glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-	glBindVertexArray(VAO);
-	
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
-
-	glUniform1i(glGetUniformLocation(shaderProgram, "texture1"), 0);
-	glUniform1i(glGetUniformLocation(shaderProgram, "texture2"), 1);
-	glUniform1i(glGetUniformLocation(shaderProgram, "texture3"), 2);
-
-	
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, texture3);
-
 	std::sort(particles.begin(), particles.end(), [view](const Particle& first, const Particle& last)
 		{
 			float firstZ = (view * glm::vec4(first.Position, 1.0f)).z;
@@ -96,18 +33,24 @@ bool ParticleGenerator::Draw(glm::mat4 proj, glm::mat4 view, GLuint shaderProgra
 
 			return firstZ < notfirstZ;
 		});
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+	glBindVertexArray(allMeshes.at(0).VAO);
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
+	BindTextures(allMeshes.at(0), shaderProgram);
 
 	for (Particle particle : this->particles)
 	{
 		if (particle.Life > 0.0f)
-		{			
+		{
 			glm::mat4 model = glm::translate(glm::mat4(1.0f), particle.Position);
 			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			glm::vec4 color	= lerp(particle.ColorEnd, particle.ColorBegin, particle.LifeRemaining / particle.Life);
+			glm::vec4 color = lerp(particle.ColorEnd, particle.ColorBegin, particle.LifeRemaining / particle.Life);
 			glUniform4fv(glGetUniformLocation(shaderProgram, "color"), 1, &color[0]);
 
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-			
+
 		}
 	}
 	glBindVertexArray(0);
@@ -141,7 +84,7 @@ bool ParticleGenerator::Update(float dt, unsigned int newParticles, glm::vec3 of
 	return true;
 }
 
- int ParticleGenerator::firstUnusedParticle()
+int ParticleGenerator::firstUnusedParticle()
 {
 	// first search from last used particle, this will usually return almost instantly
 	for (unsigned int i = lastUsedParticle; i < this->amount; ++i) {
@@ -164,9 +107,9 @@ bool ParticleGenerator::Update(float dt, unsigned int newParticles, glm::vec3 of
 void ParticleGenerator::respawnParticle(Particle& particle, glm::vec3 offset)
 {
 	float random = ((rand() % 100) - 50) / 10.0f;
-	particle.Position = glm::vec3(0,0,0) + glm::vec3(((rand() % 100) - 50) / 10.0f, ((rand() % 100) - 50) / 10.0f, ((rand() % 100) - 50) / 10.0f) + offset;
+	particle.Position = glm::vec3(0, 0, 0) + glm::vec3(((rand() % 100) - 50) / 10.0f, ((rand() % 100) - 50) / 10.0f, ((rand() % 100) - 50) / 10.0f) + offset;
 	particle.ColorBegin = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f); 
+	particle.ColorEnd = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 	particle.LifeRemaining = particle.Life = (rand() % 3) + 0.75f;;
 }
 
