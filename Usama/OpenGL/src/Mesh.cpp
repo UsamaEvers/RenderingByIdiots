@@ -15,8 +15,8 @@ Mesh::Mesh()
 	{{ 0.5f,  0.5f,  0.5f,}, { 1., 0., 0. }, { 1.0f, 1.0f }}, //6
 	{{-0.5f,  0.5f,  0.5f,}, { 1., 0., 0. }, { 0.0f, 1.0f }}, //7
 
-
 	};
+
 	unsigned int normalArray[] = {  // note that we start from 0!
 	0 ,	1,	2,
 	2,	3,	0,
@@ -57,9 +57,10 @@ Mesh::Mesh()
 	
 	std::string Container = "Resources/container.jpg";
 	std::string CryLaugh = "Resources/Sans.jpg";
-	assert(GenTexture(texture1, Container, false));
-	assert(GenTexture(texture2, CryLaugh, false));
-	glBindVertexArray(0);
+	texture1 = TextureManager::CheckIfTextureExists(Container, false);
+	texture2 = TextureManager::CheckIfTextureExists(CryLaugh, false);
+
+   	glBindVertexArray(0);
 }
 
 Mesh::~Mesh()
@@ -87,12 +88,8 @@ bool Mesh::Draw(glm::mat4 viewmat, glm::mat4 projmat,GLuint shaderProgram, GLFWw
 
 	glBindVertexArray(VAO);
 
-	int viewlLoc = glGetUniformLocation(shaderProgram, "view");
-	glUniformMatrix4fv(viewlLoc, 1, GL_FALSE, glm::value_ptr(viewmat));
-	int proj = glGetUniformLocation(shaderProgram, "projection");
-	glUniformMatrix4fv(proj, 1, GL_FALSE, glm::value_ptr(projmat));
-
-
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(viewmat));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projmat));
 	glUniform1i(glGetUniformLocation(shaderProgram, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgram, "texture2"), 1);
 	glActiveTexture(GL_TEXTURE0);
@@ -102,81 +99,14 @@ bool Mesh::Draw(glm::mat4 viewmat, glm::mat4 projmat,GLuint shaderProgram, GLFWw
 
 	for (unsigned int i = 0; i < 10; i++)
 	{
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, cubePositions[i]);
 		float angle = 20.0f * i;
+
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), cubePositions[i]);
 		model = glm::rotate(model, glm::radians(0.0f + i * 10), glm::vec3(1.0f, 0.3f, 0.5f));
-		
-		
-		int modelLoc = glGetUniformLocation(shaderProgram, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 	}
 
 	glBindVertexArray(0);
-	return true;
-}
-bool Mesh::GenTexture(GLuint& texture, std::string textName, bool alphaEnable)
-{
-	if (!alphaEnable)
-	{
-		glGenBuffers(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		stbi_set_flip_vertically_on_load(true);
-
-		int width, height, nrChannels;
-		unsigned char* data = stbi_load(textName.c_str(), &width, &height, &nrChannels, 0);
-		if (data)
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
-		else
-		{
-			std::cout << "Failed to load texture" << std::endl;
-			return false;
-		}
-		stbi_image_free(data);
-	}
-	else
-	{
-
-
-		// texture 2
-	   // ---------
-
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		// set the texture wrapping parameters
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		// set texture filtering parameters
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		// load image, create texture and generate mipmaps
-		stbi_set_flip_vertically_on_load(true);
-
-		int width, height, nrChannels;
-		unsigned char* data = stbi_load(textName.c_str(), &width, &height, &nrChannels, 0);
-
-		if (data)
-		{
-			// note that the awesomeface.png has transparency and thus an alpha channel, so make sure to tell OpenGL the data type is of GL_RGBA
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
-		else
-		{
-			std::cout << "Failed to load texture" << std::endl;
-			return false;
-		}
-		stbi_set_flip_vertically_on_load(false);
-
-	}
 	return true;
 }

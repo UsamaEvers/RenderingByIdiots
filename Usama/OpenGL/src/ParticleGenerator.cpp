@@ -2,6 +2,7 @@
 #include "../inc/stb_image.h"
 #include <algorithm>
 #include <tuple>
+#include "../inc/Texture.h"
 ParticleGenerator::ParticleGenerator()
 {
 	Init();
@@ -52,10 +53,11 @@ bool ParticleGenerator::Init()
 	std::string sans = "Resources/Sans.png";
 	std::string CREEPER = "Resources/creeperColored.png";
 
-	assert(GenTexture(texture1, crylaugh, true));
-	assert(GenTexture(texture2, sans, true));
-	assert(GenTexture(texture3, CREEPER, false));
-	glBindVertexArray(0);
+	texture1 = TextureManager::CheckIfTextureExists(crylaugh, true);
+	texture2 = TextureManager::CheckIfTextureExists(sans, true);
+	texture3 = TextureManager::CheckIfTextureExists(CREEPER, false);
+
+	
 
 	// create "amount" of particles
 	for (unsigned int i = 0; i < amount; ++i)
@@ -168,70 +170,3 @@ void ParticleGenerator::respawnParticle(Particle& particle, glm::vec3 offset)
 	particle.LifeRemaining = particle.Life = (rand() % 3) + 0.75f;;
 }
 
-
-bool ParticleGenerator::GenTexture(GLuint& texture, std::string textName, bool alphaEnable)
-{
-	if (!alphaEnable)
-	{
-		glGenBuffers(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		stbi_set_flip_vertically_on_load(true);
-
-		int width, height, nrChannels;
-		unsigned char* data = stbi_load(textName.c_str(), &width, &height, &nrChannels, 0);
-		if (data)
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
-		else
-		{
-			std::cout << "Failed to load texture" << std::endl;
-			return false;
-		}
-		stbi_image_free(data);
-	}
-	else
-	{
-
-
-		// texture 2
-	   // ---------
-
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		// set the texture wrapping parameters
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		// set texture filtering parameters
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		// load image, create texture and generate mipmaps
-		stbi_set_flip_vertically_on_load(true);
-
-		int width, height, nrChannels;
-		unsigned char* data = stbi_load(textName.c_str(), &width, &height, &nrChannels, 0);
-
-		if (data)
-		{
-			// note that the awesomeface.png has transparency and thus an alpha channel, so make sure to tell OpenGL the data type is of GL_RGBA
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
-		else
-		{
-			std::cout << "Failed to load texture" << std::endl;
-			return false;
-		}
-		//SAY GAY IF YOU THINK MY MIC IS STUPID
-		//AND THAT i SHOULD NEVER JOIN CALLS AGAIN!
-		stbi_set_flip_vertically_on_load(false);
-
-	}
-	return true;
-}

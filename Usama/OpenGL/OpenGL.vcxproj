@@ -158,6 +158,7 @@
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\stb_image.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\Camera.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="inc\stb_image.h" />
     <ClInclude Include="inc\Mesh.h" />
     <ClInclude Include="inc\Shader.h" />
+    <ClInclude Include="inc\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\container.jpg" />

@@ -9,6 +9,7 @@
 #include <glm/vec2.hpp>
 #include <vector>
 #include <GLFW/glfw3.h>
+#include "../inc/Texture.h"
 
 struct VertexPosColTex
 {
@@ -30,7 +31,6 @@ public:
 	~Mesh();
 	bool Draw(GLuint,GLFWwindow* window);
 	bool Draw(glm::mat4 viewmat, glm::mat4 projmat, GLuint shaderProgram, GLFWwindow* window);
-	bool GenTexture(GLuint& texture, std::string textName, bool alphaEnable);
 	
 };
 

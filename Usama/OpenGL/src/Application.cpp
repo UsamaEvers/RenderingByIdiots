@@ -9,8 +9,9 @@
 #include "../inc/ParticleGenerator.h"
 #include "../inc/Camera.h"
 #include "../inc/Input.h"
-
+#include <map>
 #include <time.h>
+#include "../inc/Texture.h"
 
 
 void mouseCallback(GLFWwindow* window, double xpos, double ypos );
@@ -20,6 +21,7 @@ Camera thecamera = Camera();
 int main(void)
 {
 	GLFWwindow* window;
+	TextureManager::InitTextureManager();
 
 	/* Initialize the library */
 	if (!glfwInit())
@@ -40,10 +42,9 @@ int main(void)
 	float lastX, lastY;
 	if (glewInit() != GLEW_OK)
 		std::cout << "Glew init was not equal to GLEW_OK" << std::endl;
-
+	
 	Mesh mesh;
 	ParticleGenerator ParticleGenerator;
-
 	Shader shader("Shaders/SimpleShader.vert", "Shaders/SimpleShader.frag");
 	Shader shader1("Shaders/ParticleShader.vert", "Shaders/ParticleShader.frag");
 	Input theInput = Input();
@@ -54,7 +55,6 @@ int main(void)
 	/* Loop until the user closes the window */
 	float elapsedtime = 0;
 	float previoustime = 0;
-
 	//glClearColor(0.4, 0.6, 0.9, 1.0f);
 	glClearColor(0.0, 0.0, 0.0, 1.0f);
 	while (!glfwWindowShouldClose(window))
