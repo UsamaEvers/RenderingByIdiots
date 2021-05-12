@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <tuple>
 #include "../inc/Texture.h"
+#include "../inc/Shader.h"
 ParticleGenerator::ParticleGenerator()
 {
 	Init();
@@ -14,8 +15,7 @@ ParticleGenerator::~ParticleGenerator()
 
 bool ParticleGenerator::Init()
 {
-	CreateQuad();
-		
+	CreateQuad(3, PARTICLESHADER);
 	for (unsigned int i = 0; i < amount; ++i)
 		this->particles.push_back(Particle());
 	return false;
@@ -34,10 +34,11 @@ bool ParticleGenerator::Draw(glm::mat4 proj, glm::mat4 view, GLuint shaderProgra
 			return firstZ < notfirstZ;
 		});
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	glUseProgram(ShaderManager::GetShaderID(PARTICLESHADER));
 
 	glBindVertexArray(allMeshes.at(0).VAO);
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(ShaderManager::GetShaderLocations(PARTICLESHADER).WhichType.at(VIEW), 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(ShaderManager::GetShaderLocations(PARTICLESHADER).WhichType.at(PROJ), 1, GL_FALSE, glm::value_ptr(proj));
 	BindTextures(allMeshes.at(0), shaderProgram);
 
 	for (Particle particle : this->particles)
@@ -45,9 +46,9 @@ bool ParticleGenerator::Draw(glm::mat4 proj, glm::mat4 view, GLuint shaderProgra
 		if (particle.Life > 0.0f)
 		{
 			glm::mat4 model = glm::translate(glm::mat4(1.0f), particle.Position);
-			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(ShaderManager::GetShaderLocations(PARTICLESHADER).WhichType.at(MODEL), 1, GL_FALSE, glm::value_ptr(model));
 			glm::vec4 color = lerp(particle.ColorEnd, particle.ColorBegin, particle.LifeRemaining / particle.Life);
-			glUniform4fv(glGetUniformLocation(shaderProgram, "color"), 1, &color[0]);
+			glUniform4fv(ShaderManager::GetShaderLocations(PARTICLESHADER).WhichType.at(COLOR), 1, &color[0]);
 
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

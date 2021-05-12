@@ -12,7 +12,7 @@
 #include <map>
 #include <time.h>
 #include "../inc/Texture.h"
-
+#include "../inc/Light.h"
 
 void mouseCallback(GLFWwindow* window, double xpos, double ypos );
 bool firstMouse;
@@ -21,8 +21,6 @@ Camera thecamera = Camera();
 int main(void)
 {
 	GLFWwindow* window;
-	TextureManager::InitTextureManager();
-
 	/* Initialize the library */
 	if (!glfwInit())
 		return -1;
@@ -42,16 +40,23 @@ int main(void)
 	float lastX, lastY;
 	if (glewInit() != GLEW_OK)
 		std::cout << "Glew init was not equal to GLEW_OK" << std::endl;
-	
+
+	TextureManager::InitTextureManager();
+	ShaderManager::InitShaderManager();
+
 	Mesh mesh;
 	
-	mesh.CreateCube();
+	mesh.CreateCube(true);
+	mesh.CreateQuad(2, SIMPLESHADER);
+
 	ParticleGenerator ParticleGenerator;
+
 	Shader shader("Shaders/SimpleShader.vert", "Shaders/SimpleShader.frag");
 	Shader shader1("Shaders/ParticleShader.vert", "Shaders/ParticleShader.frag");
 	Input theInput = Input();
+	Light TheLight;
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
 
 	/* Loop until the user closes the window */
@@ -69,11 +74,12 @@ int main(void)
 		theInput.processInput(window, elapsedtime, thecamera);
 		glfwSetCursorPosCallback(window, mouseCallback);
 		thecamera.Update(elapsedtime);
-		glUseProgram(shader.getID());
-		mesh.Draw(thecamera.m_View, thecamera.m_Projection, shader.getID());
-		glUseProgram(shader1.getID());
-		ParticleGenerator.Update(elapsedtime, 3, glm::vec3(0,0,0));
-		ParticleGenerator.Draw(thecamera.m_Projection, thecamera.m_View, shader1.getID());
+		//glUseProgram(shader.getID());
+		TheLight.Update(thecamera.m_View, thecamera.m_Projection);
+		mesh.Draw(thecamera.m_View, thecamera.m_Projection, shader.getID(), thecamera.m_Position);
+		//glUseProgram(shader1.getID());
+	//	ParticleGenerator.Update(elapsedtime, 3, glm::vec3(0,0,0));
+	//	ParticleGenerator.Draw(thecamera.m_Projection, thecamera.m_View, shader1.getID());
 
 
 		/* Swap front and back buffers */
