@@ -25,36 +25,36 @@
 
 namespace Tmpl8 { 
 
-double timer::inv_freq = 1;
+double m_Timer::inv_freq = 1;
 
-timer::timer(): start(get())
+m_Timer::m_Timer(): start(get())
 {
 	init();
 }
 
-float timer::elapsed() const
+float m_Timer::elapsed() const
 {
 	return (float)((get() - start) * inv_freq);
 }
 
-timer::value_type timer::get()
+m_Timer::value_type m_Timer::get()
 {
 	LARGE_INTEGER c;
 	QueryPerformanceCounter(&c);
 	return c.QuadPart;
 }
 
-double timer::to_time(const value_type vt)
+double m_Timer::to_time(const value_type vt)
 {
 	return double(vt) * inv_freq;
 }
 
-void timer::reset()
+void m_Timer::reset()
 {
 	start = get();
 }
 
-void timer::init()
+void m_Timer::init()
 {
 	LARGE_INTEGER f;
 	QueryPerformanceFrequency(&f);
@@ -311,7 +311,7 @@ int main( int argc, char **argv )
 	int exitapp = 0;
 	game = new Game();
 	game->SetTarget( surface );
-	timer t;
+	m_Timer t;
 	t.reset();
 	while (!exitapp) 
 	{

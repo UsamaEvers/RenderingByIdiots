@@ -3,13 +3,11 @@
 namespace Tmpl8 {
 	class Sprite;
 	class Missile;
-	class GalaxianPlayer: public Entity //too much inheritance is overdone		//start at 1100 stop 1352
+	class GalaxianPlayer: public Entity 
 	{
 	public:
-		GalaxianPlayer();
 		GalaxianPlayer(Surface* a_Screen);
 		~GalaxianPlayer();
-		bool Init(Surface* screen) override { return true; }
 		bool Init(Surface* screen, Missile* a_entity);
 		void Draw(Surface* screen)  override;
 		void Update(float dt) override;
@@ -27,16 +25,17 @@ namespace Tmpl8 {
 
 		void Move(float dt);
 		void Shoot(float dt);
-		int SpawnPos = 0;
+		int m_SpawnPos = 0;
 		int m_Health=0;
-		int frame = 0;
-		int frame0 = 0;
+		int m_FramesForArcing = 0;
 		int m_PlayerScore = 0;
-		float furthestLeft=0.f;
-		float furthestRight=0.f;
+
+		float m_FurthestLeft=0.f;
+		float m_FurthestRight=0.f;
+		float m_InvunerableTime = 2.f;
+
 		bool m_IsDead = false;
 		bool m_Invunerable = false;
-		float m_InvunerableTime = 2.f;
 	};
 }
 

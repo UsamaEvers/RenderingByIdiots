@@ -225,7 +225,6 @@
     <ClCompile Include="template\Entity.cpp" />
     <ClCompile Include="Galaxians\Galaxians.cpp" />
     <ClCompile Include="template\Input.cpp" />
-    <ClCompile Include="template\Player.cpp" />
     <ClCompile Include="template\game.cpp" />
     <ClCompile Include="template\surface.cpp" />
     <ClCompile Include="template\template.cpp" />
@@ -240,7 +239,6 @@
     <ClInclude Include="template\Entity.h" />
     <ClInclude Include="Galaxians\Galaxians.h" />
     <ClInclude Include="template\Input.h" />
-    <ClInclude Include="template\Player.h" />
     <ClInclude Include="template\game.h" />
     <ClInclude Include="template\surface.h" />
     <ClInclude Include="template\template.h" />

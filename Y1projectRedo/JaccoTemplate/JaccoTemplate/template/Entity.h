@@ -6,20 +6,30 @@ namespace Tmpl8 {
 	{
 	public:
 		Entity() {}
-		~Entity() {}
-		float GetX() { return Xposition; }
-		float GetY() { return Yposition; }
+		~Entity() {
+			m_TheEntity = nullptr;
+			delete m_TheEntity;
+		}
+		
+		/// Public Functions
 		virtual void Draw(Surface* screen) {}
 		virtual bool Init(Surface* screen) { return true; }
 		virtual void Update(float dt) {}
-		Sprite* GetEntity() { return theEntity; }
+		
+		/// Getters
+		Sprite* GetEntity() { return m_TheEntity; }
+		float GetX() { return m_XPosition; }
+		float GetY() { return m_YPosition; }
 	protected:
-		void SetX(float a_xPos) { Xposition = a_xPos; }
-		void SetY(float a_yPos) { Yposition = a_yPos; }
-		Sprite* theEntity;
+		/// Protected Functions/Variables
+		void SetX(float a_xPos) { m_XPosition = a_xPos; }
+		void SetY(float a_yPos) { m_YPosition = a_yPos; }
+		Sprite* m_TheEntity;
+
 	private:
-		float Xposition;
-		float Yposition;
+		/// Private Variables
+		float m_XPosition;
+		float m_YPosition;
 		
 	};
 

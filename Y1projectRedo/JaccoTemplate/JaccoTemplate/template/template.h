@@ -50,12 +50,12 @@ constexpr float PI = 3.141592653589793238462643383279502884197169399375105820974
 #define unlikely(expr) __builtin_expect((expr),false)
 #endif
 
-struct timer 
+struct m_Timer 
 { 
 	typedef long long value_type; 
 	static double inv_freq; 
 	value_type start;
-	timer();
+	m_Timer();
 	float elapsed() const;
 	static value_type get();
 	static double to_time(const value_type vt);

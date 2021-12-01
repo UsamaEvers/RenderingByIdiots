@@ -14,21 +14,22 @@ namespace Tmpl8 {
 	public:
 		Galaxians() {}
 		~Galaxians() {}
+		/// Public Functions
 		bool Init(Surface* screen);
 		bool Update(Surface* screen,float dt);
 		bool Draw(Surface* screen);
 	
 	private:
-		AlienManager* theAlienManager;
-		GalaxianPlayer* Theplayer;// needs to be moved
-		Entity* allEntities[100];
-		Background* background;
-		GalaxianUI* TheUI;
-		GalaxiansGameEnum m_CurrentGameState = GalaxiansGameEnum::GameOverState;
+		/// Private Functions
 		void CheckAlienPlayerCollision();
 		void MainMenuHandler(float dt);
-		int m_EntitySize = 2;
-		
-	};
 
+		/// Private Variables
+		AlienManager* m_TheAlienManager;
+		GalaxianPlayer* m_ThePlayer;
+		Entity* m_AllEntitiesArray[61];
+		Background* m_Background;
+		GalaxianUI* m_TheUI;
+		GalaxiansGameEnum m_CurrentGameState = GalaxiansGameEnum::GameOverState;		
+	};
 }

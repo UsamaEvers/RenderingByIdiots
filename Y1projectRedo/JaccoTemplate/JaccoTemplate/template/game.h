@@ -2,6 +2,8 @@
 
 namespace Tmpl8 {
 	class Surface;
+	class Galaxians;
+	class Sprite;
 	class Game
 	{
 	public:
@@ -16,6 +18,9 @@ namespace Tmpl8 {
 		void KeyDown(int key);
 	private:
 		Surface* screen;
+		Galaxians* GalaxianGame;
+		Surface* renderingSurface;
+		Sprite* renderingSprite;
 	};
 
-}; // namespace Tmpl8
+}; 

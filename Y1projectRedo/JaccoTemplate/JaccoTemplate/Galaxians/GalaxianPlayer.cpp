@@ -6,30 +6,27 @@
 #define PI 3.14159265
 #define degreetorad(deg) (deg*PI/180)
 namespace Tmpl8 {
-	GalaxianPlayer::GalaxianPlayer()
-	{
-		theEntity = new Sprite(new Surface("assets/shooter.png"), 1);
 
-	}
 	GalaxianPlayer::GalaxianPlayer(Surface* a_Screen)
 	{
-		theEntity = new Sprite(new Surface("assets/shooter.png"), 1);
-		SetX(a_Screen->GetWidth() * 0.5f - theEntity->GetWidth() * 0.5f);
-		SetY(a_Screen->GetHeight() - theEntity->GetHeight() - 10.f);
+		m_TheEntity = new Sprite(new Surface("assets/shooter.png"), 1);
+		SetX(a_Screen->GetWidth() * 0.5f - m_TheEntity->GetWidth() * 0.5f);
+		SetY(a_Screen->GetHeight() - m_TheEntity->GetHeight() - 10.f);
 	}
 	GalaxianPlayer::~GalaxianPlayer()
 	{
-		delete theEntity;
+		myMissile = nullptr;
+		delete myMissile;
 	}
 
 	bool GalaxianPlayer::Init(Surface* screen, Missile* a_entity)
 	{
-		furthestRight = screen->GetWidth();
-		furthestLeft = 5;
+		m_FurthestRight = screen->GetWidth();
+		m_FurthestLeft = 5;
 		m_Health = 3;
-		SetX(screen->GetWidth() * 0.5f - theEntity->GetWidth() * 0.5f);
-		SpawnPos = screen->GetWidth() * 0.5f - theEntity->GetWidth() * 0.5f;
-		SetY(screen->GetHeight() - theEntity->GetHeight() - 10.f);
+		SetX(screen->GetWidth() * 0.5f - m_TheEntity->GetWidth() * 0.5f);
+		m_SpawnPos = screen->GetWidth() * 0.5f - m_TheEntity->GetWidth() * 0.5f;
+		SetY(screen->GetHeight() - m_TheEntity->GetHeight() - 10.f);
 		myMissile = a_entity;
 		myMissile->SetIsFromPlayerTrue();
 		myMissile->Init(screen);
@@ -41,7 +38,7 @@ namespace Tmpl8 {
 		if (!m_IsDead)
 		{
 			myMissile->Draw(screen);
-			theEntity->Draw(screen, GetX(), GetY());
+			m_TheEntity->Draw(screen, GetX(), GetY());
 		}
 	}
 
@@ -87,7 +84,7 @@ namespace Tmpl8 {
 			if (Input::GetKey(44))
 			{
 				m_IsDead = false;
-				SetX(SpawnPos);
+				SetX(m_SpawnPos);
 				m_Invunerable = true;
 			}
 		}
@@ -98,19 +95,19 @@ namespace Tmpl8 {
 		float distanceTraveled = 0.5f * dt;
 		if (Input::GetKey(80))
 		{
-			if (GetX() > furthestLeft)
+			if (GetX() > m_FurthestLeft)
 				SetX(GetX() - distanceTraveled);
 		}
 		if (Input::GetKey(79))
 		{
-			if (GetX() + theEntity->GetWidth() + distanceTraveled < furthestRight)
+			if (GetX() + m_TheEntity->GetWidth() + distanceTraveled < m_FurthestRight)
 				SetX(GetX() + distanceTraveled);
 		}
 	}
 
 	void GalaxianPlayer::Shoot(float dt)
 	{
-		float Xpos = GetX() + (theEntity->GetWidth() / 2);
+		float Xpos = GetX() + (m_TheEntity->GetWidth() / 2);
 		if (Input::GetKey(44) && !myMissile->getActiveState())
 		{
 			myMissile->Shoot(Xpos, GetY(), true);
@@ -121,19 +118,7 @@ namespace Tmpl8 {
 			myMissile->FollowPlayer(Xpos, GetY() - 3);
 		}
 		float arcAngle = 5;
-		if (Input::GetKey(40) /*&& frame < 40*/)
-		{
-			//SetY(GetY() +  dt);
-			//float angleDirection = -10;
-			//float radiusForArc = degreetorad(angleDirection *frame);
-			//SetX(cos(radiusForArc) * arcAngle + GetX());
-			//SetY(sin(radiusForArc) * arcAngle + GetY());		
-			//frame++;
-		}
-		if (Input::GetKey(42) && frame0 < 40)
-		{
-			
-		}
+	
 
 	}
 

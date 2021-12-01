@@ -9,9 +9,18 @@ namespace Tmpl8 {
 
 	bool AlienManager::Init(Surface* a_Screen, GalaxianPlayer* a_Player, Entity* a_EntityArray[], int a_ArrayOffset)
 	{
+		int alienManagerArray[X][Y]
+		{
+			{0, 0, 0, 4, 0, 0, 4, 0, 0, 0},
+			{0, 0, 3, 3, 3, 3, 3, 3, 0, 0},
+			{0, 2, 2, 2, 2, 2, 2, 2, 2, 0},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+		};
 		m_HalfOfScreenWidth = a_Screen->GetWidth()*.5f;
 
-		thePlayer = a_Player;
+		m_ThePlayer = a_Player;
 		m_AlienArray = new Alien * [6 * 10];
 		int xOffsetFromScreen = (int)(a_Screen->GetWidth() / 8);
 		int yOffsetFromScreen = (int)(a_Screen->GetHeight() / 16);
@@ -103,7 +112,7 @@ namespace Tmpl8 {
 			{
 				m_AlienArray[i]->AlienIsAlive();
 				m_AlienArray[i]->UpdateState();
-				m_AlienArray[i]->SetResettPosition();
+				m_AlienArray[i]->ResetAlien();
 
 			}
 		}
@@ -113,14 +122,14 @@ namespace Tmpl8 {
 	{
 		float width = a_Screen->GetWidth();
 
-		if (leftDirection) // check the furthest left first
+		if (m_LeftDirection) // check the furthest left first
 		{
 			int startmin = 0;
 			int startmax = 6;
 			bool repeat = false;
 			int it = CheckRightColumn(startmin, startmax);
 			if (0 < it && 60 > it)
-				leftDirection = false;
+				m_LeftDirection = false;
 		}
 		else
 		{
@@ -128,10 +137,10 @@ namespace Tmpl8 {
 			int startmax = 60;
 			int it = CheckLeftColumn(startmin, startmax, width);
 			if (0 < it && 60 > it)
-				leftDirection = true;
+				m_LeftDirection = true;
 		}
 
-		if (!leftDirection)
+		if (!m_LeftDirection)
 		{
 			for (int i = 0; i < 60; i++)
 			{
@@ -150,12 +159,12 @@ namespace Tmpl8 {
 
 	void AlienManager::StateChange(float dt)
 	{
-		if (!thePlayer->GetIsDead())
+		if (!m_ThePlayer->GetIsDead())
 		{
-			timer -= dt;
-			if (timer < 0)
+			m_Timer -= dt;
+			if (m_Timer < 0)
 			{
-				timer = rand() % 10 * 20.f + 2.5f;
+				m_Timer = rand() % 10 * 20.f + 2.5f;
 				//check which side of screen 
 				int checkLeftSide = rand() % 2;
 				if (checkLeftSide == 0)
@@ -183,7 +192,6 @@ namespace Tmpl8 {
 					currentAnimationFrame = 1;
 					AlternativeValue = 0;
 				}
-
 				if (0==oneorzero|| 2 == oneorzero || 4 == oneorzero || 6 == oneorzero || 8 == oneorzero )
 				{
 					m_AlienArray[i]->SetCurrentAnimationFrame(currentAnimationFrame);
@@ -201,7 +209,7 @@ namespace Tmpl8 {
 	{
 		for (int i = 0; i < 60; i++)
 		{
-			if (m_AlienArray[i]->GetAlienState() == AlienStates::Returning)
+			if (m_AlienArray[i]->GetAlienState() == AlienEnum::Returning)
 			{
 				vec2 a = CalculateReturnPositions(i);
 				m_AlienArray[i]->SetReturnPosition(a.x, a.y);
@@ -234,7 +242,7 @@ namespace Tmpl8 {
 		{
 			if (!m_AlienArray[i]->GetIsDead())
 			{
-				if (m_AlienArray[i]->GetAlienState() == AlienStates::Formation && m_AlienArray[i]->GetX() < 10)
+				if (m_AlienArray[i]->GetAlienState() == AlienEnum::Formation && m_AlienArray[i]->GetX() < 10)
 				{
 					return i;
 				}
@@ -252,7 +260,7 @@ namespace Tmpl8 {
 		{
 			if (!m_AlienArray[i]->GetIsDead())
 			{
-				if (m_AlienArray[i]->GetAlienState() == AlienStates::Formation && m_AlienArray[i]->GetX() > a_Width - 10 - m_AlienArray[i]->GetEntity()->GetWidth())
+				if (m_AlienArray[i]->GetAlienState() == AlienEnum::Formation && m_AlienArray[i]->GetX() > a_Width - 10 - m_AlienArray[i]->GetEntity()->GetWidth())
 				{
 					return i;
 				}
@@ -269,7 +277,7 @@ namespace Tmpl8 {
 		{
 			if (!m_AlienArray[i]->GetIsDead())
 			{
-				if (m_AlienArray[i]->GetAlienState() == Tmpl8::AlienStates::Formation)
+				if (m_AlienArray[i]->GetAlienState() == Tmpl8::AlienEnum::Formation)
 				{
 					m_AlienArray[i]->UpdateState();
 					if (m_AlienArray[i]->GetX() > m_HalfOfScreenWidth)
@@ -282,7 +290,7 @@ namespace Tmpl8 {
 						m_AlienArray[i]->SetArcLeftTrue(true);
 						m_AlienArray[i]->SetArcPivot(true);
 					}
-					m_AlienArray[i]->SetDivePosition(thePlayer->GetX(), thePlayer->GetY());
+					m_AlienArray[i]->SetDivePosition(m_ThePlayer->GetX(), m_ThePlayer->GetY());
 					return	i;
 				}
 			}
@@ -299,7 +307,7 @@ namespace Tmpl8 {
 		{
 			if (!m_AlienArray[i]->GetIsDead())
 			{
-				if (m_AlienArray[i]->GetAlienState() == Tmpl8::AlienStates::Formation)
+				if (m_AlienArray[i]->GetAlienState() == Tmpl8::AlienEnum::Formation)
 				{
 					m_AlienArray[i]->UpdateState();
 					if (m_AlienArray[i]->GetX()>m_HalfOfScreenWidth)
@@ -312,8 +320,7 @@ namespace Tmpl8 {
 						m_AlienArray[i]->SetArcLeftTrue(true);
 						m_AlienArray[i]->SetArcPivot(true);
 					}
-					
-					m_AlienArray[i]->SetDivePosition(thePlayer->GetX(), thePlayer->GetY() + thePlayer->GetEntity()->GetHeight());
+					m_AlienArray[i]->SetDivePosition(m_ThePlayer->GetX(), m_ThePlayer->GetY() + m_ThePlayer->GetEntity()->GetHeight());
 					return	i;
 				}
 			}

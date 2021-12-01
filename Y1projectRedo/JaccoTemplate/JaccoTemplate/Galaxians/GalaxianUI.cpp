@@ -193,7 +193,7 @@ void Tmpl8::GalaxianUI::Init(Surface* a_Screen, int a_MaxPlayerHealth)
 		tempSprite->MyCurrentState = GalaxiansGameEnum::GameInfoState;
 		float a = 0.05f * i;
 		tempSprite->Position = vec2(a_Screen->GetWidth() * 0.2f, a_Screen->GetHeight() * (0.735f - a));
- 		m_AlienUI[i] = tempSprite;
+		m_AlienUI[i] = tempSprite;
 	}
 	{
 		m_AlienUI[0]->theSprite = new Sprite(new Surface("assets/galaxianC.png"), 2);
@@ -201,7 +201,7 @@ void Tmpl8::GalaxianUI::Init(Surface* a_Screen, int a_MaxPlayerHealth)
 		m_AlienUI[2]->theSprite = new Sprite(new Surface("assets/galaxianA.png"), 2);
 		m_AlienUI[3]->theSprite = new Sprite(new Surface("assets/elite.png"), 1);
 	}
-	
+
 }
 void Tmpl8::GalaxianUI::Update(GalaxiansGameEnum currentState, float a_DT, int a_playerScore)
 {
@@ -274,6 +274,42 @@ GalaxiansGameEnum Tmpl8::GalaxianUI::GalaxiansGameEnumState(GalaxiansGameEnum* c
 	}
 
 	return *currentState;
+}
+
+Text Tmpl8::GalaxianUI::EnableText(int a_Iterator)
+{
+	TextArray[a_Iterator].Render = true;
+	return TextArray[a_Iterator];
+}
+
+Text Tmpl8::GalaxianUI::EnableText(std::string a_Text)
+{
+	for (int i = 0; i < s_MaxAmountOfText; i++)
+	{
+		if (TextArray[i].text == a_Text)
+		{
+			TextArray[i].Render = true;
+			return TextArray[i];
+		}
+	}
+}
+
+Text Tmpl8::GalaxianUI::DisableText(int a_Iterator)
+{
+	TextArray[a_Iterator].Render = false;
+	return TextArray[a_Iterator];
+}
+
+Text Tmpl8::GalaxianUI::DisableText(std::string a_Text)
+{
+	for (int i = 0; i < s_MaxAmountOfText; i++)
+	{
+		if (TextArray[i].text == a_Text)
+		{
+			TextArray[i].Render = false;
+			return TextArray[i];
+		}
+	}
 }
 
 void Tmpl8::GalaxianUI::UpdateScore(float a_DT, int a_playerScore)
@@ -394,7 +430,7 @@ void Tmpl8::GalaxianUI::RenderCurrentState(GalaxiansGameEnum currentState, float
 	{
 		if (currentState == m_PlayerHealthUI[i]->MyCurrentState)
 		{
-			m_PlayerHealthUI[i]->render  = true;
+			m_PlayerHealthUI[i]->render = true;
 		}
 		else
 		{

@@ -6,7 +6,7 @@ namespace Tmpl8
 {
 	bool Missile::Init(Surface* screen)
 	{
-		theEntity = new Sprite(new Surface("assets/verticalline.png"), 1);
+		m_TheEntity = new Sprite(new Surface("assets/verticalline.png"), 1);
 		m_MaxYDistance = screen->GetHeight();
 
 		return true;
@@ -17,11 +17,11 @@ namespace Tmpl8
 		//Player's missile is always drawn, while the aliens' isn't
 		if (m_fromPlayer)
 		{
-			theEntity->Draw(screen, GetX(), GetY());
+			m_TheEntity->Draw(screen, GetX(), GetY());
 		}
 		else if (m_Active)
 		{
-			theEntity->Draw(screen, GetX(), GetY());
+			m_TheEntity->Draw(screen, GetX(), GetY());
 		}
 
 	}
@@ -31,11 +31,11 @@ namespace Tmpl8
 		if (m_Active)
 		{
 			float speed = 1.5f * dt;
-			if (direction > 0.1f)		// shooting up
+			if (m_UpDowndirection > 0.1f)		// shooting up
 			{
 				SetY(GetY() - speed);
 			}
-			else if (direction < -0.1f)	// shooting down
+			else if (m_UpDowndirection < -0.1f)	// shooting down
 			{
 				SetY(GetY() + speed);
 			}
@@ -59,9 +59,9 @@ namespace Tmpl8
 		SetX(a_Xpos);
 		SetY(a_Ypos);
 		if (a_ShootingUp)
-			direction = 1.f;
+			m_UpDowndirection = 1.f;
 		else
-			direction = -1.f;
+			m_UpDowndirection = -1.f;
 	}
 
 	void Missile::FollowPlayer(float a_Xpos, float a_Ypos)
@@ -75,12 +75,12 @@ namespace Tmpl8
 		if (GetY() > m_MaxYDistance)
 		{
 			m_Active = false;
-			direction = 0.f;
+			m_UpDowndirection = 0.f;
 		}
 		else if (GetY() < 10)
 		{
 			m_Active = false;
-			direction = 0.f;
+			m_UpDowndirection = 0.f;
 		}
 		return true;
 	}
@@ -125,10 +125,10 @@ namespace Tmpl8
 	}
 	bool Missile::CheckMissilePlayerCollision(float dt)
 	{
-		float pw = thePlayer->GetEntity()->GetWidth();
-		float ph = thePlayer->GetEntity()->GetHeight();
-		float px = thePlayer->GetX();
-		float py = thePlayer->GetY();
+		float pw = m_ThePlayer->GetEntity()->GetWidth();
+		float ph = m_ThePlayer->GetEntity()->GetHeight();
+		float px = m_ThePlayer->GetX();
+		float py = m_ThePlayer->GetY();
 		float radi0 = (pw + ph) * 0.25f;
 
 		float mw = GetEntity()->GetWidth();
@@ -145,9 +145,9 @@ namespace Tmpl8
 		{
 			m_Active = false;
 			//This needs to kill the player.
-			if (!thePlayer->GetInvunerable() && !thePlayer->GetIsDead())
+			if (!m_ThePlayer->GetInvunerable() && !m_ThePlayer->GetIsDead())
 			{
-				thePlayer->TakeDamage();
+				m_ThePlayer->TakeDamage();
 			}
 		}
 		return true;

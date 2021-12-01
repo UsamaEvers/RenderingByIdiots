@@ -10,41 +10,38 @@
 #include "Missile.h"
 namespace Tmpl8 {
 
-	bool draw = true;
-
-
 	bool Galaxians::Init(Surface* screen)
 	{
 		//Init alienmanager
-		theAlienManager = new AlienManager();
-		Theplayer = new GalaxianPlayer(screen);
-		theAlienManager->Init(screen, Theplayer, allEntities, 1);
+		m_TheAlienManager = new AlienManager();
+		m_ThePlayer = new GalaxianPlayer(screen);
+		m_TheAlienManager->Init(screen, m_ThePlayer, m_AllEntitiesArray, 1);
 
 		//init Player and Missile
-		Missile* themissile = new Missile(theAlienManager->GetAlienArray());
-		Theplayer->Init(screen, themissile);
-		allEntities[0] = Theplayer;
-		TheUI = new GalaxianUI();
-		background = new Background(screen);
-		TheUI->Init(screen,Theplayer->GetHealth());
+		Missile* themissile = new Missile(m_TheAlienManager->GetAlienArray());
+		m_ThePlayer->Init(screen, themissile);
+		m_AllEntitiesArray[0] = m_ThePlayer;
+		m_TheUI = new GalaxianUI();
+		m_Background = new Background(screen);
+		m_TheUI->Init(screen,m_ThePlayer->GetHealth());
 		return true;
 	}
 	bool Galaxians::Update(Surface* screen, float dt)
 	{
 		MainMenuHandler(dt);
 		CheckAlienPlayerCollision();
-		background->Update(screen, dt);
-		TheUI->Update(m_CurrentGameState, dt,Theplayer->GetPlayerScore());
-		TheUI->UpdatePlayerHealth(Theplayer->GetHealth());
+		m_Background->Update(screen, dt);
+		m_TheUI->Update(m_CurrentGameState, dt,m_ThePlayer->GetPlayerScore());
+		m_TheUI->UpdatePlayerHealth(m_ThePlayer->GetHealth());
 
 		if (GalaxiansGameEnum::GameActiveState == m_CurrentGameState)
 		{
-			theAlienManager->Update(screen, dt);
+			m_TheAlienManager->Update(screen, dt);
 			for (int i = 0; i < 61; i++)
 			{
-				if (nullptr == allEntities[i])
+				if (nullptr == m_AllEntitiesArray[i])
 					break;
-				allEntities[i]->Update(dt);
+				m_AllEntitiesArray[i]->Update(dt);
 			}
 			return true;
 		}
@@ -52,17 +49,16 @@ namespace Tmpl8 {
 	}
 	bool Galaxians::Draw(Surface* screen)
 	{
-		if (draw)
-			TheUI->Draw(screen);
-		background->Draw(screen);
+		m_TheUI->Draw(screen);
+		m_Background->Draw(screen);
 
 		if (GalaxiansGameEnum::GameActiveState == m_CurrentGameState)
 		{
 			for (int i = 0; i < 61; i++)
 			{
-				if (nullptr == allEntities[i])
+				if (nullptr == m_AllEntitiesArray[i])
 					break;
-				allEntities[i]->Draw(screen);
+				m_AllEntitiesArray[i]->Draw(screen);
 			}
 			return true;
 		}
@@ -73,21 +69,21 @@ namespace Tmpl8 {
 		for (int i = 0; i < 60; i++)
 		{
 			float radi0 =
-				(Theplayer->GetEntity()->GetWidth() +
-					Theplayer->GetEntity()->GetHeight()) * 0.25f;
+				(m_ThePlayer->GetEntity()->GetWidth() +
+					m_ThePlayer->GetEntity()->GetHeight()) * 0.25f;
 			float radi1 =
-				(theAlienManager->GetAlienArray()[i]->GetEntity()->GetWidth() +
-					theAlienManager->GetAlienArray()[i]->GetEntity()->GetHeight()) * 0.25f;
+				(m_TheAlienManager->GetAlienArray()[i]->GetEntity()->GetWidth() +
+					m_TheAlienManager->GetAlienArray()[i]->GetEntity()->GetHeight()) * 0.25f;
 
-			float dx = theAlienManager->GetAlienArray()[i]->GetX() - Theplayer->GetX();
-			float dy = theAlienManager->GetAlienArray()[i]->GetY() - Theplayer->GetY();
+			float dx = m_TheAlienManager->GetAlienArray()[i]->GetX() - m_ThePlayer->GetX();
+			float dy = m_TheAlienManager->GetAlienArray()[i]->GetY() - m_ThePlayer->GetY();
 			float distance = sqrt(dx * dx + dy * dy);
 
 			if (distance < radi0 + radi1)
 			{
-				if (!Theplayer->GetInvunerable() && !Theplayer->GetIsDead())
+				if (!m_ThePlayer->GetInvunerable() && !m_ThePlayer->GetIsDead())
 				{
- 					Theplayer->TakeDamage();
+ 					m_ThePlayer->TakeDamage();
 				}
 			}
 		}
@@ -100,18 +96,15 @@ namespace Tmpl8 {
 			{
 				Input::SetKey(44, false);
 				Input::SetKey(42, false);
-				TheUI->GalaxiansGameEnumState(&m_CurrentGameState);
-			
-				
+				m_TheUI->GalaxiansGameEnumState(&m_CurrentGameState);				
 			}
 		}
-		if (Theplayer->m_GAMEEND)
+		if (m_ThePlayer->m_GAMEEND)
 		{
-			TheUI->GalaxiansGameEnumState(&m_CurrentGameState);
-			theAlienManager->ResetAliens(dt);
-			Theplayer->m_GAMEEND = false;
-			Theplayer->SetHealth();
+			m_TheUI->GalaxiansGameEnumState(&m_CurrentGameState);
+			m_TheAlienManager->ResetAliens(dt);
+			m_ThePlayer->m_GAMEEND = false;
+			m_ThePlayer->SetHealth();
 		}
-	
 	}
 }

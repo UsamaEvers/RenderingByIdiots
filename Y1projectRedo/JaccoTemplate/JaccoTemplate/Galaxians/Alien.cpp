@@ -12,15 +12,15 @@ namespace Tmpl8 {
 	{
 		m_ScoreGivenOnDeath = a_DeathScore;
 		m_CurrentAnimationFrame = a_StartingAnimationFrame;
-		theEntity = a_AlienType;
+		m_TheEntity = a_AlienType;
 		SetX(a_Xpos);
 		SetY(a_Ypos);
-		myState = AlienStates::Formation;
+		m_CurrentAlienState = AlienEnum::Formation;
 		m_MyGalaxianEnemyState = a_Galaxiansenemytype;
 		for (int i = 0; i < MISSILEAMOUNT; i++)
 		{
-			missiles[i] = new Missile(a_GalaxianPlayer);
-			missiles[i]->Init(screen);
+			m_MissileArray[i] = new Missile(a_GalaxianPlayer);
+			m_MissileArray[i]->Init(screen);
 		}
 		return this;
 	}
@@ -33,25 +33,25 @@ namespace Tmpl8 {
 			UpdateAnimation(dt);
 		}
 		else {
-			switch (myState)
+			switch (m_CurrentAlienState)
 			{
-			case Tmpl8::AlienStates::Formation:
+			case Tmpl8::AlienEnum::Formation:
 				Move(dt);
 				UpdateAnimation(dt);
 				break;
-			case Tmpl8::AlienStates::Arcing:
+			case Tmpl8::AlienEnum::Arcing:
 				Arc(true, dt);
 				break;
-			case Tmpl8::AlienStates::Diving:
+			case Tmpl8::AlienEnum::Diving:
 				Dive(dt);
 				Shoot(0, 0, dt);
 				for (int i = 0; i < MISSILEAMOUNT; i++)
 				{
 					int thisvalueisonlyusedfortheplayer = 0;
-					missiles[i]->Update(dt, thisvalueisonlyusedfortheplayer);
+					m_MissileArray[i]->Update(dt, thisvalueisonlyusedfortheplayer);
 				}
 				break;
-			case Tmpl8::AlienStates::Returning:
+			case Tmpl8::AlienEnum::Returning:
 				Return(dt);
 				break;
 			default:
@@ -64,11 +64,11 @@ namespace Tmpl8 {
 	{
 		if (!m_IsDead)
 		{
-			theEntity->Draw(screen, GetX(), GetY());
+			m_TheEntity->Draw(screen, GetX(), GetY());
 
 			for (int i = 0; i < MISSILEAMOUNT; i++)
 			{
-				missiles[i]->Draw(screen);
+				m_MissileArray[i]->Draw(screen);
 			}
 		}
 	}
@@ -77,7 +77,7 @@ namespace Tmpl8 {
 
 	void Alien::UpdateAnimation(float dt)
 	{
-		if (theEntity->Frames() > 1)
+		if (m_TheEntity->Frames() > 1)
 		{
 			m_SecsBetweenFrames -= dt * 0.01f;
 			if (m_SecsBetweenFrames < 0)
@@ -87,11 +87,11 @@ namespace Tmpl8 {
 				{
 				case 0:
 					m_CurrentAnimationFrame = 1;
-					theEntity->SetFrame(1);
+					m_TheEntity->SetFrame(1);
 					break;
 				case 1:
 					m_CurrentAnimationFrame = 0;
-					theEntity->SetFrame(0);
+					m_TheEntity->SetFrame(0);
 					break;
 				default:
 					break;
@@ -115,25 +115,25 @@ namespace Tmpl8 {
 		if (m_ArcLeft)	// move Left
 		{
 			float angleDirection = -5;
-			float AngleForArc = degreetorad(angleDirection * frame);
+			float AngleForArc = degreetorad(angleDirection * m_FramesForArcing);
 			SetX(cos(AngleForArc) * m_RadiusOfCircle + m_ArcPivot.x);
 			SetY(sin(AngleForArc) * m_RadiusOfCircle + m_ArcPivot.y);
-			frame++;
+			m_FramesForArcing++;
 		}
 		else			// move Right
 		{
 			float angleDirection = 5;
-			float AngleForArc = degreetorad(angleDirection * frame + 180);
+			float AngleForArc = degreetorad(angleDirection * m_FramesForArcing + 180);
 			SetX(cos(AngleForArc) * m_RadiusOfCircle + m_ArcPivot.x);
 			SetY(sin(AngleForArc) * m_RadiusOfCircle + m_ArcPivot.y);
-			frame++;
+			m_FramesForArcing++;
 		}
-		if (frame > 40)
+		if (m_FramesForArcing > 40)
 		{
-			frame = 0;
+			m_FramesForArcing = 0;
 			m_startPosition.x = GetX();
 			m_startPosition.y = GetY();
-			myState = AlienStates::Diving;
+			m_CurrentAlienState = AlienEnum::Diving;
 		}
 	}
 
@@ -154,11 +154,6 @@ namespace Tmpl8 {
 			float xOffset = 10;
 			SetX(lerp(m_startPosition.x, m_endPosition.x, m_DiveTime));
 			SetY(lerp(m_startPosition.y, m_endPosition.y, m_DiveTime));
-
-
-			//	m_ThePlayerVar.
-					//SetX(GODSWORDS(divePositionX, diveToPositionX * 0.7f, diveToPositionX +xOffset, diveToPositionX*0.8f, dt));
-					//SetY(GODSWORDS(divePositionY, diveToPositionY * 0.5f, diveToPositionY * 1.0f, diveToPositionY*1.1, dt));
 		}
 	}
 
@@ -169,9 +164,9 @@ namespace Tmpl8 {
 			m_ShootCooldown = SHOOTCOOLDOWN;
 			for (int i = 0; i < MISSILEAMOUNT; i++)
 			{
-				if (false == missiles[i]->getActiveState())
+				if (false == m_MissileArray[i]->getActiveState())
 				{
-					missiles[i]->Shoot(this->GetX(), this->GetY(), false);
+					m_MissileArray[i]->Shoot(this->GetX(), this->GetY(), false);
 					break;
 				}
 			}
@@ -196,18 +191,12 @@ namespace Tmpl8 {
 		}
 		else
 		{
-
 			m_DiveTime += dt * 0.005f;
 			SetX(lerp(m_startPosition.x, m_endPosition.x, m_DiveTime));
 			SetY(lerp(m_startPosition.y, m_endPosition.y, m_DiveTime));
 		}
 	}
 
-	float Alien::GODSWORDS(float a_Val0, float a_Val1, float a_Val2, float a_Val3, float a_dt)
-	{
-		m_DiveTime += a_dt * 0.001f;
-		return ((1 - m_DiveTime) * (1 - m_DiveTime) * (1 - m_DiveTime) * a_Val0 + 3 * m_DiveTime * (1 - m_DiveTime) * (1 - m_DiveTime) * a_Val1 + 3 * (1 - m_DiveTime) * m_DiveTime * m_DiveTime * a_Val2 + m_DiveTime * m_DiveTime * m_DiveTime * a_Val3);
-	}
 
 	float Alien::lerp(float a, float b, float f)
 	{
@@ -216,19 +205,19 @@ namespace Tmpl8 {
 
 	void Alien::UpdateState()
 	{
-		switch (myState)
+		switch (m_CurrentAlienState)
 		{
-		case Tmpl8::AlienStates::Formation:
-			myState = Tmpl8::AlienStates::Arcing;
+		case Tmpl8::AlienEnum::Formation:
+			m_CurrentAlienState = Tmpl8::AlienEnum::Arcing;
 			break;
-		case Tmpl8::AlienStates::Arcing:
-			myState = Tmpl8::AlienStates::Diving;
+		case Tmpl8::AlienEnum::Arcing:
+			m_CurrentAlienState = Tmpl8::AlienEnum::Diving;
 			break;
-		case Tmpl8::AlienStates::Diving:
-			myState = Tmpl8::AlienStates::Returning;
+		case Tmpl8::AlienEnum::Diving:
+			m_CurrentAlienState = Tmpl8::AlienEnum::Returning;
 			break;
-		case Tmpl8::AlienStates::Returning:
-			myState = Tmpl8::AlienStates::Formation;
+		case Tmpl8::AlienEnum::Returning:
+			m_CurrentAlienState = Tmpl8::AlienEnum::Formation;
 			break;
 		default:
 			break;
@@ -252,17 +241,21 @@ namespace Tmpl8 {
 
 		for (int i = 0; i < MISSILEAMOUNT; i++)
 		{
-			missiles[i]->SetActiveState(false);
+			m_MissileArray[i]->SetActiveState(false);
 		}
 	}
-	void Alien::SetResettPosition()
+	void Alien::AlienIsAlive()
+	{
+		m_IsDead = false;
+	}
+	void Alien::ResetAlien()
 	{
 		m_startPosition = vec2(0);
 		m_endPosition = vec2(0);
 		m_DiveTime = 0;
 		for (int i = 0; i < MISSILEAMOUNT; i++)
 		{
-			missiles[i]->SetActiveState(false);
+			m_MissileArray[i]->SetActiveState(false);
 		}
 
 	}
