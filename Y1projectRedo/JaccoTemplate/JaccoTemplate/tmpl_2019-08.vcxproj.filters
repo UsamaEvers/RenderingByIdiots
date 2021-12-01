@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="template\game.cpp" />
+    <ClCompile Include="template\surface.cpp">
+      <Filter>template code</Filter>
+    </ClCompile>
+    <ClCompile Include="template\template.cpp">
+      <Filter>template code</Filter>
+    </ClCompile>
+    <ClCompile Include="Galaxians\Galaxians.cpp" />
+    <ClCompile Include="template\Player.cpp" />
+    <ClCompile Include="template\Entity.cpp" />
+    <ClCompile Include="Galaxians\GalaxianPlayer.cpp" />
+    <ClCompile Include="template\Input.cpp" />
+    <ClCompile Include="Galaxians\Missile.cpp" />
+    <ClCompile Include="Galaxians\AlienManager.cpp" />
+    <ClCompile Include="Galaxians\Alien.cpp" />
+    <ClCompile Include="Galaxians\Background.cpp" />
+    <ClCompile Include="Galaxians\GalaxianUI.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="template\game.h" />
+    <ClInclude Include="template\surface.h">
+      <Filter>template code</Filter>
+    </ClInclude>
+    <ClInclude Include="template\template.h">
+      <Filter>template code</Filter>
+    </ClInclude>
+    <ClInclude Include="Galaxians\Galaxians.h" />
+    <ClInclude Include="template\Player.h" />
+    <ClInclude Include="template\Entity.h" />
+    <ClInclude Include="Galaxians\GalaxianPlayer.h" />
+    <ClInclude Include="template\Input.h" />
+    <ClInclude Include="Galaxians\Missile.h" />
+    <ClInclude Include="Galaxians\AlienManager.h" />
+    <ClInclude Include="Galaxians\Alien.h" />
+    <ClInclude Include="Galaxians\Background.h" />
+    <ClInclude Include="Galaxians\GalaxianUI.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="template code">
+      <UniqueIdentifier>{bf32dd6e-4be7-4889-8ac6-49e7ee163c40}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="_readme.txt">
+      <Filter>template code</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
