@@ -15,12 +15,12 @@ namespace Tmpl8 {
 		//Init alienmanager
 		m_TheAlienManager = new AlienManager();
 		m_ThePlayer = new GalaxianPlayer(screen);
-		m_TheAlienManager->Init(screen, m_ThePlayer, m_AllEntitiesArray, 1);
+		m_TheAlienManager->Init(screen, m_ThePlayer, m_AllEntitiesArray, 0);
 
 		//init Player and Missile
 		Missile* themissile = new Missile(m_TheAlienManager->GetAlienArray());
 		m_ThePlayer->Init(screen, themissile);
-		m_AllEntitiesArray[0] = m_ThePlayer;
+		m_AllEntitiesArray[60] = m_ThePlayer;
 		m_TheUI = new GalaxianUI();
 		m_Background = new Background(screen);
 		m_TheUI->Init(screen,m_ThePlayer->GetHealth());
@@ -68,22 +68,28 @@ namespace Tmpl8 {
 	{
 		for (int i = 0; i < 60; i++)
 		{
-			float radi0 =
-				(m_ThePlayer->GetEntity()->GetWidth() +
-					m_ThePlayer->GetEntity()->GetHeight()) * 0.25f;
-			float radi1 =
-				(m_TheAlienManager->GetAlienArray()[i]->GetEntity()->GetWidth() +
-					m_TheAlienManager->GetAlienArray()[i]->GetEntity()->GetHeight()) * 0.25f;
-
-			float dx = m_TheAlienManager->GetAlienArray()[i]->GetX() - m_ThePlayer->GetX();
-			float dy = m_TheAlienManager->GetAlienArray()[i]->GetY() - m_ThePlayer->GetY();
-			float distance = sqrt(dx * dx + dy * dy);
-
-			if (distance < radi0 + radi1)
+			//only check the diving aliens for collision
+			if (m_TheAlienManager->GetAlienArray()[i]->GetAlienState() == AlienEnum::Diving && !m_TheAlienManager->GetAlienArray()[i]->GetIsDead())
 			{
-				if (!m_ThePlayer->GetInvunerable() && !m_ThePlayer->GetIsDead())
+				float radi0 =
+					(m_ThePlayer->GetEntity()->GetWidth() +
+						m_ThePlayer->GetEntity()->GetHeight()) * 0.25f;
+				float radi1 =
+					(m_TheAlienManager->GetAlienArray()[i]->GetEntity()->GetWidth() +
+						m_TheAlienManager->GetAlienArray()[i]->GetEntity()->GetHeight()) * 0.25f;
+
+				float dx = m_TheAlienManager->GetAlienArray()[i]->GetX() - m_ThePlayer->GetX();
+				float dy = m_TheAlienManager->GetAlienArray()[i]->GetY() - m_ThePlayer->GetY();
+				float distance = sqrt(dx * dx + dy * dy);
+
+				if (distance < radi0 + radi1)
 				{
- 					m_ThePlayer->TakeDamage();
+					if (!m_ThePlayer->GetInvunerable() && !m_ThePlayer->GetIsDead())
+					{
+						m_ThePlayer->TakeDamage();
+						m_TheAlienManager->GetAlienArray()[i]->AlienIsDead();
+						break;
+					}
 				}
 			}
 		}
@@ -104,7 +110,7 @@ namespace Tmpl8 {
 			m_TheUI->GalaxiansGameEnumState(&m_CurrentGameState);
 			m_TheAlienManager->ResetAliens(dt);
 			m_ThePlayer->m_GAMEEND = false;
-			m_ThePlayer->SetHealth();
+			m_ThePlayer->ResetToMaxHealth();
 		}
 	}
 }

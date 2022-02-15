@@ -51,7 +51,7 @@ namespace Tmpl8 {
 		void SetArcPivot(bool a_Val)						{ m_ArcPivot = vec2(
 																GetX() + (a_Val? -m_RadiusOfCircle:m_RadiusOfCircle),
 																GetY())												;}
-
+		void SetPlayDeathAnimationToFalse()					{ m_PlayBombAnimation = false; }
 		/// All the getters		
 		GalaxianEnemyEnum GetGalaxianEnemyState() const		{ return m_MyGalaxianEnemyState; }
 		AlienEnum GetAlienState() const						{ return m_CurrentAlienState; }
@@ -71,6 +71,7 @@ namespace Tmpl8 {
 		void Dive(float dt);
 		void Shoot(int a_Xpos, int a_Ypos, float dt);
 		void Return(float dt);
+		void DeathAnimationUpdate(float dt);
 		float lerp(float a, float b, float f);
 		
 
@@ -86,7 +87,9 @@ namespace Tmpl8 {
 		vec2 m_ArcPivot;
 		int m_FramesForArcing = 0;
 		int m_CurrentAnimationFrame = 0;
-		float m_SecsBetweenFrames= 0.5f;
+		int m_CurrentDeathAnimationFrame = 0;
+		float m_SecsBetweenFrames = 0.5f;
+		float m_SecsBetweenFramesDeath = 0.5f;
 		float m_ShootCooldown = 0;
 		float m_DiveTime = 0;
 		float m_ScoreGivenOnDeath = 5;
@@ -95,6 +98,8 @@ namespace Tmpl8 {
 		bool m_ArcLeft = false;
 		bool m_IsDead = false;
 		bool m_ResetFormation = false;
+		bool m_ExplosionAnimationPlaying = false;
+		bool m_PlayBombAnimation = false;
 	};
 
 }

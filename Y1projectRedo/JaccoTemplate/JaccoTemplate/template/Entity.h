@@ -24,7 +24,9 @@ namespace Tmpl8 {
 		/// Protected Functions/Variables
 		void SetX(float a_xPos) { m_XPosition = a_xPos; }
 		void SetY(float a_yPos) { m_YPosition = a_yPos; }
+		void SwitchSprite();
 		Sprite* m_TheEntity;
+		Sprite* m_DeathSprite;
 
 	private:
 		/// Private Variables

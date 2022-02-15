@@ -311,8 +311,8 @@ int main( int argc, char **argv )
 	int exitapp = 0;
 	game = new Game();
 	game->SetTarget( surface );
-	m_Timer t;
-	t.reset();
+	m_Timer t0;
+	t0.reset();
 	while (!exitapp) 
 	{
 	#ifdef ADVANCEDGL
@@ -328,11 +328,11 @@ int main( int argc, char **argv )
 		}
 		else
 		{
-			unsigned char* t = (unsigned char*)target;
+			unsigned char* t1 = (unsigned char*)target;
 			for( int i = 0; i < ScreenHeight; i++ )
 			{
-				memcpy( t, surface->GetBuffer() + i * ScreenWidth, ScreenWidth * 4 );
-				t += pitch;
+				memcpy( t1, surface->GetBuffer() + i * ScreenWidth, ScreenWidth * 4 );
+				t1 += pitch;
 			}
 		}
 		SDL_UnlockTexture( frameBuffer );
@@ -345,8 +345,8 @@ int main( int argc, char **argv )
 			firstframe = false;
 		}
 		// calculate frame time and pass it to game->Tick
-		game->Tick( t.elapsed() );
-		t.reset();
+		game->Tick( t0.elapsed() );
+		t0.reset();
 		// event loop
 		SDL_Event event;
 		while (SDL_PollEvent( &event )) 

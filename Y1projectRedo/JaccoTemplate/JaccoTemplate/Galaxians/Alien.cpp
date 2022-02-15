@@ -13,6 +13,8 @@ namespace Tmpl8 {
 		m_ScoreGivenOnDeath = a_DeathScore;
 		m_CurrentAnimationFrame = a_StartingAnimationFrame;
 		m_TheEntity = a_AlienType;
+		m_DeathSprite = new Sprite(new Surface("assets/explosionAlien.jpg"), 4);
+
 		SetX(a_Xpos);
 		SetY(a_Ypos);
 		m_CurrentAlienState = AlienEnum::Formation;
@@ -29,8 +31,10 @@ namespace Tmpl8 {
 	{
 		if (m_IsDead)
 		{
-			Move(dt);
-			UpdateAnimation(dt);
+			if(!m_PlayBombAnimation)
+				Move(dt);
+			DeathAnimationUpdate(dt);
+			//	UpdateAnimation(dt);
 		}
 		else {
 			switch (m_CurrentAlienState)
@@ -70,6 +74,10 @@ namespace Tmpl8 {
 			{
 				m_MissileArray[i]->Draw(screen);
 			}
+		}
+		else if (m_ExplosionAnimationPlaying)
+		{
+			m_TheEntity->Draw(screen, GetX(), GetY());
 		}
 	}
 
@@ -183,7 +191,6 @@ namespace Tmpl8 {
 		{
 			m_DiveTime = 0;
 			UpdateState();
-			// write code here
 			m_ResetFormation = true;
 
 			SetX(m_endPosition.x);
@@ -196,6 +203,73 @@ namespace Tmpl8 {
 			SetY(lerp(m_startPosition.y, m_endPosition.y, m_DiveTime));
 		}
 	}
+
+	void Alien::DeathAnimationUpdate(float dt)
+	{
+		//Animation update for the alien's death animation
+		//================================================
+		if (m_PlayBombAnimation)
+		{
+			if (!m_ExplosionAnimationPlaying) {
+				m_ExplosionAnimationPlaying = true;
+				SwitchSprite();
+				m_SecsBetweenFramesDeath = 0.5f;
+			}
+			if (m_ExplosionAnimationPlaying) {
+				m_SecsBetweenFramesDeath -= dt * 0.0675f;
+				if (m_SecsBetweenFramesDeath < 0)
+				{
+					m_SecsBetweenFramesDeath = 0.5f;
+					switch (m_CurrentDeathAnimationFrame)
+					{
+					case 0:
+						m_CurrentDeathAnimationFrame = 1;
+						m_TheEntity->SetFrame(1);
+						break;
+					case 1:
+						m_CurrentDeathAnimationFrame = 2;
+						m_TheEntity->SetFrame(2);
+						break;
+					case 2:
+						m_CurrentDeathAnimationFrame = 3;
+						m_SecsBetweenFramesDeath = 1.5f;
+						m_TheEntity->SetFrame(3);
+						break;
+					case 3:
+						m_ExplosionAnimationPlaying = false;
+						m_PlayBombAnimation = false;
+						SwitchSprite();
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		}
+		
+		//Animation update for the alien's normal animation
+		//=================================================
+		m_SecsBetweenFrames -= dt * 0.01f;
+		if (m_SecsBetweenFrames < 0)
+		{
+			m_SecsBetweenFrames = 0.5f;
+			switch (m_CurrentAnimationFrame)
+			{
+			case 0:
+				m_CurrentAnimationFrame = 1;
+				//m_TheEntity->SetFrame(1);
+				break;
+			case 1:
+				m_CurrentAnimationFrame = 0;
+			//	m_TheEntity->SetFrame(0);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+
 
 
 	float Alien::lerp(float a, float b, float f)
@@ -223,6 +297,7 @@ namespace Tmpl8 {
 			break;
 		}
 	}
+
 	void Alien::SetDivePosition(float ax, float ay)
 	{
 
@@ -230,34 +305,39 @@ namespace Tmpl8 {
 		m_endPosition.y = ay;
 
 	}
+
 	void Alien::SetReturnPosition(float axpos, float aypos)
 	{
 		m_endPosition.x = axpos;
 		m_endPosition.y = aypos;
 	}
+
 	void Alien::AlienIsDead()
 	{
 		m_IsDead = true;
-
+		m_PlayBombAnimation = true;
 		for (int i = 0; i < MISSILEAMOUNT; i++)
 		{
 			m_MissileArray[i]->SetActiveState(false);
 		}
 	}
+
 	void Alien::AlienIsAlive()
 	{
 		m_IsDead = false;
 	}
+
 	void Alien::ResetAlien()
 	{
 		m_startPosition = vec2(0);
 		m_endPosition = vec2(0);
 		m_DiveTime = 0;
+		m_PlayBombAnimation = false;
+		m_ExplosionAnimationPlaying = false;
 		for (int i = 0; i < MISSILEAMOUNT; i++)
 		{
 			m_MissileArray[i]->SetActiveState(false);
 		}
-
 	}
 
 }

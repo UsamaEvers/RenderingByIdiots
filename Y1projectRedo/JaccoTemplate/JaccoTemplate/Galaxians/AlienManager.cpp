@@ -41,6 +41,8 @@ namespace Tmpl8 {
 						xOffsetFromScreen + xOffset * a_X,
 						yOffsetFromScreen + yOffset * a_Y, 0, OneOrZero);
 					m_AlienArray[a_X * X + a_Y]->AlienIsDead();
+					m_AlienArray[a_X * X + a_Y]->SetPlayDeathAnimationToFalse();
+
 					break;
 				case 1:
 					m_AlienArray[a_X * X + a_Y] = (new Alien())->Init(a_Screen,
@@ -159,8 +161,10 @@ namespace Tmpl8 {
 
 	void AlienManager::StateChange(float dt)
 	{
-		if (!m_ThePlayer->GetIsDead())
+		bool test = m_ThePlayer->GetInvunerable();
+		if (!m_ThePlayer->GetIsDead() && !m_ThePlayer->GetInvunerable())
 		{
+			bool a = test;
 			m_Timer -= dt;
 			if (m_Timer < 0)
 			{
