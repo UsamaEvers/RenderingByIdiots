@@ -16,6 +16,7 @@ namespace Tmpl8
 		~AlienManager() {}
 		bool Init(Surface* a_Screen, GalaxianPlayer* a_Player,  Entity* a_EntityArray[],int a_ArrayOffset);
 		void Update(Surface* a_Screen,float dt);
+		bool CheckIfAllAliensAreDead(float dt);
 		void ResetAliens(float dt);
 
 		/// Get Functions
@@ -42,7 +43,6 @@ namespace Tmpl8
 		float m_HalfOfScreenWidth = 0;
 		bool m_AlienSent = false;
 		bool m_LeftDirection = true;
-
 	};
 
 }

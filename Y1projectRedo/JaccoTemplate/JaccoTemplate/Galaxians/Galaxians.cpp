@@ -112,5 +112,12 @@ namespace Tmpl8 {
 			m_ThePlayer->m_GAMEEND = false;
 			m_ThePlayer->ResetToMaxHealth();
 		}
+		if (m_TheAlienManager->CheckIfAllAliensAreDead(dt))
+		{
+			m_TheUI->GalaxiansGameEnumState(&m_CurrentGameState);
+			m_TheAlienManager->ResetAliens(dt);
+			m_ThePlayer->m_GAMEEND = false;
+		}
+		
 	}
 }

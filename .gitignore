@@ -44,3 +44,11 @@ Brian/Dependencies/GLM/glm/out/
 /Usama/x64/Release
 *.diagsession
 /Usama/OpenGL/x64/Release
+.obj
+.tlog
+*.obj
+*.tlog
+*.log
+*.recipe
+*.pdb
+Y1projectRedo/JaccoTemplate/JaccoTemplate/tmpl_2019-08_debug.exe
